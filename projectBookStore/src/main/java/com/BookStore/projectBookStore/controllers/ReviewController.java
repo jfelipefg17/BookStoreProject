@@ -32,10 +32,9 @@ public class ReviewController {
         if (bookOptional.isPresent()) {
             Book book = bookOptional.get();
             Review review = new Review(name, description, book);
-            // No es necesario establecer likes a 0, ya que la lista ya está inicializada vacía.
             reviewRepository.save(review);
         }
-        return "redirect:/books/" + bookId;
+        return "redirect:/book/listBook?id=" + bookId;
     }
 
 
@@ -57,14 +56,14 @@ public class ReviewController {
         review.setName(name);
         review.setDescription(description);
         reviewRepository.save(review);
-        return "redirect:/books/" + bookId;
+        return "redirect:/book/listBook?id=" + bookId;
     }
 
     // Endpoint para eliminar una reseña
     @PostMapping("/{reviewId}/delete")
     public String deleteReview(@PathVariable Integer bookId, @PathVariable Long reviewId) {
         reviewRepository.deleteById(reviewId);
-        return "redirect:/books/" + bookId;
+        return "redirect:/book/listBook?id=" + bookId;
     }
 
     // Endpoint para dar like a una reseña
@@ -72,13 +71,11 @@ public class ReviewController {
     public String likeReview(@PathVariable Integer bookId, @PathVariable Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
-        // Crear y guardar el like asociado a la reseña (sin asignar un usuario)
         Like like = new Like(review);
         likeRepository.save(like);
-        // Agregar el like a la lista de likes de la reseña
         review.getLikes().add(like);
         reviewRepository.save(review);
-        return "redirect:/books/" + bookId;
+        return "redirect:/book/listBook?id=" + bookId;
     }
 
     
