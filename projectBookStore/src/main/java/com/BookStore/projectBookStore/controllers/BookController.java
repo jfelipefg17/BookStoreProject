@@ -1,12 +1,7 @@
 package com.BookStore.projectBookStore.controllers;
 
-import com.BookStore.projectBookStore.entities.Author;
-import com.BookStore.projectBookStore.entities.Book;
-import com.BookStore.projectBookStore.entities.Publisher;
-import com.BookStore.projectBookStore.repositories.LikeRepository;
-import com.BookStore.projectBookStore.services.AuthorService;
-import com.BookStore.projectBookStore.services.BookService;
-import com.BookStore.projectBookStore.services.PublisherService;
+import com.BookStore.projectBookStore.entities.*;
+import com.BookStore.projectBookStore.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -29,15 +24,20 @@ public class BookController {
     private PublisherService publisherService;
 
     @Autowired
-    private LikeRepository likeRepository;
+    private CategoryService categoryService;
 
-    // Formulario para crear un libro
     @GetMapping("/formBook")
     public String bookForm(ModelMap modelMap) {
+        try {
+            modelMap.addAttribute("authors", authorService.searchAllAuthors());
+            modelMap.addAttribute("publishers", publisherService.searchAllPublisher());
+            modelMap.addAttribute("categories", categoryService.searchAllCategories());
+        } catch (Exception e) {
+            modelMap.addAttribute("error", "Error loading form: " + e.getMessage());
+        }
         return "create";
     }
 
-    // Crear un libro
     @PostMapping("/createBook")
     public String createBook(@RequestParam String title,
                              @RequestParam int stock,
@@ -45,64 +45,72 @@ public class BookController {
                              @RequestParam String image,
                              @RequestParam Integer authorId,
                              @RequestParam Integer publisherId,
-                             @RequestParam String category,
-                             @RequestParam(required = false) Boolean likes,
+                             @RequestParam Integer categoryId,
+                             @RequestParam(required = false) List<Like> likes,
+                             @RequestParam(required = false) List<Review> reviews,
                              RedirectAttributes redirectAttributes) {
         try {
             Author author = authorService.findById(authorId);
             Publisher publisher = publisherService.findById(publisherId);
+            Category category = categoryService.findById(categoryId);
 
-            if (author == null || publisher == null) {
-                redirectAttributes.addFlashAttribute("error", "Invalid author or publisher.");
+            if (author == null || publisher == null || category == null) {
+                redirectAttributes.addFlashAttribute("error", "Invalid author, publisher, or category.");
                 return "redirect:/book/formBook";
             }
 
-            bookService.createBook(title, stock, price, image, author, publisher, category, likes != null && likes);
-            redirectAttributes.addFlashAttribute("success", "The book was successfully uploaded.");
-            return "redirect:/book/listBooks";
-
+            bookService.createBook(title, stock, price, image, author, publisher, category, likes, reviews);
+            redirectAttributes.addFlashAttribute("success", "The book was successfully uploaded");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error creating book: " + e.getMessage());
-            return "redirect:/book/formBook";
         }
+        return "redirect:/book/listBooks";
     }
 
-    // Listar todos los libros
     @GetMapping("/listBooks")
     public String listBooks(ModelMap modelMap) {
-        List<Book> books = bookService.searchAllBook();
-        if (books == null || books.isEmpty()) {
-            modelMap.addAttribute("message", "There are no books.");
+        try {
+            List<Book> books = bookService.searchAllBook();
+            modelMap.addAttribute("books", books);
+        } catch (Exception e) {
+            modelMap.addAttribute("error", "Error listing books: " + e.getMessage());
         }
-        modelMap.addAttribute("books", books);
         return "listBooks";
     }
 
-    // Mostrar detalles de un libro específico
     @GetMapping("/listBook")
     public String listBook(@RequestParam Integer id, ModelMap modelMap, RedirectAttributes redirectAttributes) {
-        Book book = bookService.findById(id);
-        if (book == null) {
-            redirectAttributes.addFlashAttribute("error", "Book not found with id: " + id);
-            return "redirect:/book/listBooks";
+        try {
+            Book book = bookService.findById(id);
+            if (book == null) {
+                redirectAttributes.addFlashAttribute("error", "Book not found with id: " + id);
+                return "redirect:/book/listBooks";
+            }
+            modelMap.addAttribute("book", book);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error retrieving book: " + e.getMessage());
         }
-        modelMap.addAttribute("book", book);
         return "book";
     }
 
-    // Formulario para modificar un libro
     @GetMapping("/modifyBook")
     public String showModifyBookForm(@RequestParam Integer id, ModelMap modelMap, RedirectAttributes redirectAttributes) {
-        Book book = bookService.findById(id);
-        if (book == null) {
-            redirectAttributes.addFlashAttribute("error", "Book not found.");
-            return "redirect:/book/listBooks";
+        try {
+            Book book = bookService.findById(id);
+            if (book == null) {
+                redirectAttributes.addFlashAttribute("error", "Book not found.");
+                return "redirect:/book/listBooks";
+            }
+            modelMap.addAttribute("book", book);
+            modelMap.addAttribute("authors", authorService.searchAllAuthors());
+            modelMap.addAttribute("publishers", publisherService.searchAllPublisher());
+            modelMap.addAttribute("categories", categoryService.searchAllCategories());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error loading modification form: " + e.getMessage());
         }
-        modelMap.addAttribute("book", book);
         return "modify";
     }
 
-    // Modificar un libro
     @PostMapping("/modifyBook")
     public String modifyBook(@RequestParam Integer id,
                              @RequestParam String title,
@@ -111,45 +119,37 @@ public class BookController {
                              @RequestParam String image,
                              @RequestParam Integer authorId,
                              @RequestParam Integer publisherId,
-                             @RequestParam String category,
-                             @RequestParam(required = false) Boolean likes,
+                             @RequestParam Integer categoryId,
+                             @RequestParam(required = false) List<Like> likes,
+                             @RequestParam(required = false) List<Review> reviews,
                              RedirectAttributes redirectAttributes) {
-
         try {
-            Book existingBook = bookService.findById(id);
-            if (existingBook == null) {
-                redirectAttributes.addFlashAttribute("error", "The book does not exist.");
+            Book book = bookService.findById(id);
+            if (book == null) {
+                redirectAttributes.addFlashAttribute("error", "Book not found.");
                 return "redirect:/book/listBooks";
             }
 
             Author author = authorService.findById(authorId);
             Publisher publisher = publisherService.findById(publisherId);
+            Category category = categoryService.findById(categoryId);
 
-            if (author == null || publisher == null) {
-                redirectAttributes.addFlashAttribute("error", "Invalid author or publisher.");
+            if (author == null || publisher == null || category == null) {
+                redirectAttributes.addFlashAttribute("error", "Invalid author, publisher, or category.");
                 return "redirect:/book/modifyBook?id=" + id;
             }
 
-            bookService.modifyBook(id, title, stock, price, image, author, publisher, category, likes != null && likes);
+            bookService.modifyBook(id, title, stock, price, image, author, publisher, category, likes, reviews);
             redirectAttributes.addFlashAttribute("success", "The book was successfully modified.");
-            return "redirect:/book/listBooks";
-
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error modifying book: " + e.getMessage());
-            return "redirect:/book/modifyBook?id=" + id;
         }
+        return "redirect:/book/listBooks";
     }
 
-    // Eliminar un libro
     @PostMapping("/deleteBook")
     public String deleteBook(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         try {
-            Book book = bookService.findById(id);
-            if (book == null) {
-                redirectAttributes.addFlashAttribute("error", "The book does not exist or has already been deleted.");
-                return "redirect:/book/listBooks";
-            }
-
             bookService.deleteBook(id);
             redirectAttributes.addFlashAttribute("success", "The book was successfully deleted.");
         } catch (Exception e) {
@@ -158,30 +158,23 @@ public class BookController {
         return "redirect:/book/listBooks";
     }
 
-    // Buscar un libro por título
-    @GetMapping("/findByName")
+    @GetMapping("/searchBook")
     public String findByName(@RequestParam(required = false) String title, ModelMap modelMap) {
-        if (title != null && !title.isEmpty()) {
-            Book book = bookService.findByTitle(title);
-            if (book != null) {
-                modelMap.addAttribute("book", book);
-            } else {
-                modelMap.addAttribute("error", "No book found with that title.");
+        try {
+            if (title != null && !title.isEmpty()) {
+                Book book = bookService.findByTitle(title);
+                if (book != null) {
+                    modelMap.addAttribute("book", book);
+                } else {
+                    modelMap.addAttribute("error", "No book found with that title.");
+                }
             }
+        } catch (Exception e) {
+            modelMap.addAttribute("error", "Error searching for book: " + e.getMessage());
         }
         return "findByName";
     }
 
-    // Dar like a un libro
-    @PostMapping("/{id}/like")
-    public String likeBook(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        try {
-            bookService.addLikeToBook(id);
-            redirectAttributes.addFlashAttribute("success", "Like added to book successfully.");
-            return "redirect:/book/listBook?id=" + id;
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error adding like: " + e.getMessage());
-            return "redirect:/book/listBooks";
-        }
-    }
+
+
 }

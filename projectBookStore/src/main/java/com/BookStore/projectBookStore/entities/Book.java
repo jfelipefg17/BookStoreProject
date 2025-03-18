@@ -37,7 +37,7 @@ public class Book {
 
     public Book() {}
 
-    public Book(String title, int stock, double price, String image, Author author, Publisher publisher, Category category) {
+    public Book(String title, int stock, double price, String image, Author author, Publisher publisher, Category category, List<Like> likes, List<Review> reviews) {
         this.title = title;
         this.stock = stock;
         this.price = price;
@@ -45,6 +45,8 @@ public class Book {
         this.author = author;
         this.publisher = publisher;
         this.category = category;
+        this.likes = likes;
+        this.reviews = reviews;
     }
 
     public int getId() {
