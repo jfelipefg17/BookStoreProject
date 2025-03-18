@@ -1,6 +1,7 @@
 package com.BookStore.projectBookStore.services;
 
 import com.BookStore.projectBookStore.entities.Book;
+import com.BookStore.projectBookStore.entities.Like;
 import com.BookStore.projectBookStore.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,5 +81,24 @@ public class BookService {
         } else {
             throw new Exception("Cannot delete. Book not found with ID: " + id);
         }
+    }
+
+    // Añadir un método específico para dar like
+    public void addLikeToBook(Integer bookId) throws Exception {
+        Book book = findById(bookId);
+        Like like = new Like(book);
+        book.getLikes().add(like);
+        bookRepository.save(book);
+    }
+
+    public int countLikesForBook(Integer bookId) throws Exception {
+        Book book = findById(bookId);
+        return book.getLikes().size();
+    }
+
+    public List<Book> searchAllBookOrderedByReviews() {
+        // Implementación de ordenamiento por reviews
+        return bookRepository.findAllOrderByReviewCountDesc();
+
     }
 }
