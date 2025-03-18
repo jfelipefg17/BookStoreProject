@@ -136,5 +136,20 @@ public class BookController {
         return "redirect:/book/listBooks";
     }
 
+    // Method for search book by name
+    @GetMapping("/findByName")
+    public String findByName(@RequestParam(required = false) String title, ModelMap modelMap) {
+        if (title != null && !title.isEmpty()) {
+            Book book = bookService.findByTitle(title);
+            if (book != null) {
+                modelMap.addAttribute("book", book);
+            } else {
+                modelMap.addAttribute("error", "No se encontró un libro con ese nombre.");
+            }
+        }
+        return "findByName";
+    }
+
+
 
 }

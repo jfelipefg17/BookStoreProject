@@ -81,4 +81,10 @@ public class BookService {
             throw new Exception("Cannot delete. Book not found with ID: " + id);
         }
     }
+
+    // Find book by name
+    public Book findByTitle(String title) {
+        return bookRepository.findByTitle(title);
+    }
+
 }
