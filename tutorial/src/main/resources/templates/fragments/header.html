@@ -1,0 +1,28 @@
+<!-- header -->
+<th:block th:fragment="header">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary py-4">
+    <div class="container">
+      <a class="navbar-brand" href="#">Gestión de Pedidos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+              aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link active" th:href="@{/}">Home</a>
+          <a class="nav-link active" th:href="@{/about}">About</a>
+          <a class="nav-link active" th:href="@{/pedidos}">Pedidos</a>
+          <a class="nav-link active" th:href="@{/contact}">Contact</a>
+          <a class="nav-link active" th:href="@{/pedidos/create}">Crear Pedido</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="masthead bg-primary text-white text-center py-4">
+    <div class="container d-flex align-items-center flex-column">
+      <h2 th:text="${subtitle} ?: 'Sistema de Pedidos'"></h2>
+    </div>
+  </header>
+</th:block>
+
