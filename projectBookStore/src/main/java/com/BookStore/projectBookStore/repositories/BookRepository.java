@@ -19,4 +19,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     // Método personalizado para ordenar libros por cantidad de reviews (de mayor a menor)
     @Query("SELECT b FROM Book b LEFT JOIN b.reviews r GROUP BY b.id ORDER BY COUNT(r) DESC")
     List<Book> findAllOrderByReviewCountDesc();
+  
+    // find-search book by name
+    Book findByTitle(String title);
+
 }
