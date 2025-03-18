@@ -13,13 +13,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>projectBookStore</name>
 	<description>Project using java and spring for a book store</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
 	<scm>
 		<connection/>
 		<developerConnection/>
