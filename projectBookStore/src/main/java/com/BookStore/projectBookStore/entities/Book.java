@@ -38,6 +38,9 @@ public class Book {
     @jakarta.persistence.OneToMany
     private List<Like> likes = new ArrayList<>();
 
+    @jakarta.persistence.OneToMany
+    private List<Review> reviews = new ArrayList<>();
+
 
 
     public Book() {
@@ -117,6 +120,14 @@ public class Book {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     public List<Like> getLikes() {
