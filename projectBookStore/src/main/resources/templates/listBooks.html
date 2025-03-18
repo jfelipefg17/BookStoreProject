@@ -36,7 +36,7 @@
         <tr th:each="book : ${books}">
             <td th:text="${book.id}"></td>
             <td th:text="${book.title}"></td>
-            <td th:text="${book.author}"></td>
+            <td th:text="${book.author.getName()}"></td>
             <td th:text="${book.price}"></td>
             <td>
                 <a th:href="@{/book/listBook(id=${book.id})}">

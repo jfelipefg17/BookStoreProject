@@ -43,29 +43,47 @@ public class BookController {
                              @RequestParam int stock,
                              @RequestParam double price,
                              @RequestParam String image,
-                             @RequestParam Integer authorId,
-                             @RequestParam Integer publisherId,
-                             @RequestParam Integer categoryId,
+                             @RequestParam String authorName,
+                             @RequestParam String publisherName,
+                             @RequestParam String categoryName,
                              @RequestParam(required = false) List<Like> likes,
                              @RequestParam(required = false) List<Review> reviews,
                              RedirectAttributes redirectAttributes) {
         try {
-            Author author = authorService.findById(authorId);
-            Publisher publisher = publisherService.findById(publisherId);
-            Category category = categoryService.findById(categoryId);
-
-            if (author == null || publisher == null || category == null) {
-                redirectAttributes.addFlashAttribute("error", "Invalid author, publisher, or category.");
-                return "redirect:/book/formBook";
+            // Buscar o crear Autor
+            Author author = authorService.findByName(authorName);
+            if (author == null) {
+                author = new Author();
+                author.setName(authorName);
+                author = authorService.save(author); // Guarda y obtiene el ID
             }
 
+            // Buscar o crear Editorial
+            Publisher publisher = publisherService.findByName(publisherName);
+            if (publisher == null) {
+                publisher = new Publisher();
+                publisher.setName(publisherName);
+                publisher = publisherService.save(publisher);
+            }
+
+            // Buscar o crear Categoría
+            Category category = categoryService.findByName(categoryName);
+            if (category == null) {
+                category = new Category();
+                category.setName(categoryName);
+                category = categoryService.save(category);
+            }
+
+            // Crear el libro con los objetos creados
             bookService.createBook(title, stock, price, image, author, publisher, category, likes, reviews);
+
             redirectAttributes.addFlashAttribute("success", "The book was successfully uploaded");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error creating book: " + e.getMessage());
         }
         return "redirect:/book/listBooks";
     }
+
 
     @GetMapping("/listBooks")
     public String listBooks(ModelMap modelMap) {
@@ -158,7 +176,7 @@ public class BookController {
         return "redirect:/book/listBooks";
     }
 
-    @GetMapping("/searchBook")
+    @GetMapping("/findByName")
     public String findByName(@RequestParam(required = false) String title, ModelMap modelMap) {
         try {
             if (title != null && !title.isEmpty()) {

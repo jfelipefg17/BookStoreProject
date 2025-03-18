@@ -1,6 +1,7 @@
 package com.BookStore.projectBookStore.services;
 
 
+import com.BookStore.projectBookStore.entities.Author;
 import com.BookStore.projectBookStore.entities.Book;
 import com.BookStore.projectBookStore.entities.Publisher;
 import com.BookStore.projectBookStore.repositories.PublisherRepository;
@@ -42,6 +43,19 @@ public class PublisherService {
         }
     }
 
+    //Read-Search specific publisher by Name
+    public Publisher findByName(String name) throws Exception {
+
+        Optional<Publisher> publisherOptional = publisherRepository.findByName(name);
+
+        if (publisherOptional.isPresent()) {
+            return publisherOptional.get();
+
+        } else {
+            return null;
+        }
+    }
+
     //Update-Modify Book
     public void modifyPublisher(int id, String name) throws Exception {
 
@@ -66,6 +80,15 @@ public class PublisherService {
 
         } else {
             throw new Exception("Cannot delete. Author not found with ID: " + id);
+        }
+    }
+
+    public Publisher save(Publisher publisher) throws Exception {
+        try {
+            publisherRepository.save(publisher);
+            return publisher;
+        }catch (Exception e) {
+            throw new Exception("Cannot save. Publisher not found with name: " + publisher.getName());
         }
     }
 }

@@ -34,13 +34,13 @@
             <input type="text" id="image" name="image" th:value="${book.image}" required><br>
 
             <label for="author">Author:</label>
-            <input type="text" id="author" name="author" th:value="${book.author}" required><br>
+            <input type="text" id="author" name="author" th:value="${book.author.getName()}" required><br>
 
             <label for="publisher">Publisher:</label>
-            <input type="text" id="publisher" name="publisher" th:value="${book.publisher}" required><br>
+            <input type="text" id="publisher" name="publisher" th:value="${book.publisher.getName()}" required><br>
 
             <label for="category">Category:</label>
-            <input type="text" id="category" name="category" th:value="${book.category}" required><br>
+            <input type="text" id="category" name="category" th:value="${book.category.getName()}" required><br>
 
             <label for="likes">Likes:</label>
             <input type="checkbox" id="likes" name="likes" th:checked="${book.likes}">
