@@ -1,6 +1,7 @@
 package com.BookStore.projectBookStore.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ public class Client {
     private String email = "";
     private String password = "";
     private String role = "";
-    @jakarta.persistence.OneToMany
-    private List<BookOrder> bookOrders = new ArrayList<>();
-    private List<Book> FavBooks = new ArrayList<>();
+    @OneToMany(mappedBy = "client")
+    private List<BookOrder> bookOrders;
+    //private List<Book> FavBooks = new ArrayList<>();
 
 }

@@ -25,7 +25,7 @@ public class AuthorService {
     }
 
     //Read-Search all authors
-    public List<Author> searchAllBook() {
+    public List<Author> searchAllAuthors() {
         return authorRepository.findAll();
     }
 
@@ -43,7 +43,7 @@ public class AuthorService {
     }
 
     //Update-Modify Author
-    public void modifyBook(int id, String name) throws Exception {
+    public void modifyAuthors(int id, String name) throws Exception {
 
         Optional<Author> authorOptional = authorRepository.findById(id);
 
@@ -59,7 +59,7 @@ public class AuthorService {
     }
 
     // Delete Author
-    public void deleteBook(Integer id) throws Exception {
+    public void deleteAuthor(Integer id) throws Exception {
 
         if (authorRepository.findById(id).isPresent()) {
             authorRepository.deleteById(id);
