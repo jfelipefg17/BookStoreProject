@@ -7,7 +7,6 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 @Entity
 @jakarta.persistence.Table(name = "authors")
 public class Author {
-    
 
     @jakarta.persistence.Id
     @jakarta.persistence.GeneratedValue
