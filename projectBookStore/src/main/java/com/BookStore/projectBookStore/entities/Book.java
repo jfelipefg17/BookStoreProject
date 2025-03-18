@@ -23,7 +23,6 @@ public class Book {
     @JoinColumn(name = "author_id")
     private Author author;
 
-    
     @jakarta.persistence.ManyToOne
     @jakarta.persistence.JoinColumn(name = "publisher_id")
     @ManyToOne
