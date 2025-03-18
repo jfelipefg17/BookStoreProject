@@ -1,52 +1,46 @@
 package com.BookStore.projectBookStore.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@jakarta.persistence.Table(name = "books")
+@Table(name = "books")
 public class Book {
 
-    @jakarta.persistence.Id
-    @jakarta.persistence.GeneratedValue
-    @PrimaryKeyJoinColumn
-    private int id = 0;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    private String tittle = "";
+    private String title;  // <- Corregido de "tittle" a "title"
 
-    private int stock = 0;
+    private int stock;
+    private double price;
+    private String image;
 
-    private double price = 0;
-
-    private String image = "";
-
-    @jakarta.persistence.ManyToOne
-    @jakarta.persistence.JoinColumn(name = "author_id")
+    @ManyToOne
+    @JoinColumn(name = "author_id")
     private Author author;
 
     
     @jakarta.persistence.ManyToOne
     @jakarta.persistence.JoinColumn(name = "publisher_id")
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
-    @jakarta.persistence.ManyToOne
-    @jakarta.persistence.JoinColumn(name = "Category_id")
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @jakarta.persistence.OneToMany
-    private List<Like> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Like> likes;
 
+    public Book() {}
 
-    public Book() {
-
-    }
-
-    public Book(int id, String tittle, int stock, double price, String image, Author author, Publisher publisher, Category category) {
-        this.id = id;
-        this.tittle = tittle;
+    public Book(String title, int stock, double price, String image, Author author, Publisher publisher, Category category) {
+        this.title = title;
         this.stock = stock;
         this.price = price;
         this.image = image;
@@ -64,11 +58,11 @@ public class Book {
     }
 
     public String getTitle() {
-        return tittle;
+        return title;
     }
 
     public void setTitle(String tittle) {
-        this.tittle = tittle;
+        this.title = tittle;
     }
 
     public int getStock(){
@@ -132,7 +126,7 @@ public class Book {
     public String toString() {
         return "Book{" +
                 "id=" + id +
-                ", tittle='" + tittle + '\'' +
+                ", tittle='" + title + '\'' +
                 ", stock=" + stock +
                 ", price=" + price +
                 ", image='" + image + '\'' +

@@ -23,4 +23,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     // Delete book
     void deleteById(Integer id);
 
+    // find-search book by name
+    Book findByTitle(String title);
+
 }
