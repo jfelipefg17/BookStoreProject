@@ -3,7 +3,6 @@ package com.BookStore.projectBookStore.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 
-
 @Entity
 @jakarta.persistence.Table(name = "authors")
 public class Author {
