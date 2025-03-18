@@ -3,7 +3,9 @@ package com.BookStore.projectBookStore.services;
 
 import com.BookStore.projectBookStore.entities.Author;
 import com.BookStore.projectBookStore.entities.Book;
+import com.BookStore.projectBookStore.entities.Category;
 import com.BookStore.projectBookStore.repositories.AuthorRepository;
+import com.BookStore.projectBookStore.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,19 @@ public class AuthorService {
         }
     }
 
+    //Read-Search specific author by name
+    public Author findByName(String name) throws Exception {
+
+        Optional<Author> authorOptional = authorRepository.findByName(name);
+
+        if (authorOptional.isPresent()) {
+            return authorOptional.get();
+
+        } else {
+            return null;
+        }
+    }
+
     //Update-Modify Author
     public void modifyAuthors(int id, String name) throws Exception {
 
@@ -68,4 +83,15 @@ public class AuthorService {
             throw new Exception("Cannot delete. Author not found with ID: " + id);
         }
     }
+
+    public Author save(Author author) throws Exception {
+        try {
+            authorRepository.save(author);
+            return author;
+        }catch (Exception e) {
+            throw new Exception("Cannot save. Author not found with name: " + author.getName());
+        }
+    }
+
+
 }
