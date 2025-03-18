@@ -1,7 +1,11 @@
 package com.BookStore.projectBookStore.controllers;
 
+import com.BookStore.projectBookStore.entities.Author;
 import com.BookStore.projectBookStore.entities.Book;
+import com.BookStore.projectBookStore.entities.Publisher;
+import com.BookStore.projectBookStore.services.AuthorService;
 import com.BookStore.projectBookStore.services.BookService;
+import com.BookStore.projectBookStore.services.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,6 +26,12 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private AuthorService authorService;
+
+    @Autowired
+    private PublisherService publisherService;
+
 
     //Form to create a book
     @GetMapping("/formBook")
@@ -32,9 +42,24 @@ public class BookController {
 
     //Create a book
     @PostMapping("/createBook")
-    public String createBook(@RequestParam String title, @RequestParam int stock, @RequestParam double price, @RequestParam String image, @RequestParam String author, @RequestParam String publisher, @RequestParam String category, @RequestParam(required = false) Boolean likes, RedirectAttributes redirectAttributes) {
-
+    public String createBook(@RequestParam String title,
+                             @RequestParam int stock,
+                             @RequestParam double price,
+                             @RequestParam String image,
+                             @RequestParam int authorId,
+                             @RequestParam int publisherId,
+                             @RequestParam String category,
+                             @RequestParam(required = false) Boolean likes,
+                             RedirectAttributes redirectAttributes) {
         try {
+            Author author = authorService.findById(authorId); // Buscar el autor por ID
+            Publisher publisher = publisherService.findById(publisherId); // Buscar la editorial por ID
+
+            if (author == null || publisher == null) {
+                redirectAttributes.addFlashAttribute("error", "Invalid author or publisher.");
+                return "redirect:/book/formBook";
+            }
+
             bookService.createBook(title, stock, price, image, author, publisher, category, likes);
             redirectAttributes.addFlashAttribute("success", "The book was successfully uploaded");
             return "redirect:/book/listBooks";
@@ -102,7 +127,7 @@ public class BookController {
 
     // Update-modify the book
     @PostMapping("/modifyBook")
-    public String modifyBook(@RequestParam Integer id, @RequestParam String title, @RequestParam int stock, @RequestParam double price, @RequestParam String image, @RequestParam String author, @RequestParam String publisher, @RequestParam String category, @RequestParam(required = false) boolean likes, RedirectAttributes redirectAttributes, ModelMap modelMap) throws Exception {
+    public String modifyBook(@RequestParam Integer id, @RequestParam String title, @RequestParam int stock, @RequestParam double price, @RequestParam String image, @RequestParam Author author, @RequestParam Publisher publisher, @RequestParam String category, @RequestParam(required = false) boolean likes, RedirectAttributes redirectAttributes, ModelMap modelMap) throws Exception {
 
         try {
             bookService.modifyBook(id, title, stock, price, image, author, publisher, category, likes);

@@ -1,8 +1,11 @@
 package com.BookStore.projectBookStore.services;
 
+import com.BookStore.projectBookStore.entities.Author;
 import com.BookStore.projectBookStore.entities.Book;
+import com.BookStore.projectBookStore.entities.Publisher;
 import com.BookStore.projectBookStore.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +20,7 @@ public class BookService {
     private BookRepository bookRepository;
 
     //Create book
-    public void createBook(String title, int stock, double price, String image, String author, String publisher, String category, Boolean likes) {
+    public void createBook(String title, int stock, double price, String image, Author author, Publisher publisher, String category, Boolean likes) {
 
         Book book = new Book();
         book.setTitle(title);
@@ -50,7 +53,7 @@ public class BookService {
     }
 
     //Update-Modify Book
-    public void modifyBook(Integer id, String title, int stock, double price, String image, String author, String publisher, String category, boolean likes) throws Exception {
+    public void modifyBook(Integer id, String title, int stock, double price, String image, Author author, Publisher publisher, String category, boolean likes) throws Exception {
 
         Optional<Book> bookOptional = bookRepository.findById(id);
 
