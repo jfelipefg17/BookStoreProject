@@ -1,6 +1,8 @@
 package com.BookStore.projectBookStore.controllers;
-
+import com.BookStore.projectBookStore.entities.Review;
 import com.BookStore.projectBookStore.entities.Book;
+import com.BookStore.projectBookStore.entities.Like;
+import com.BookStore.projectBookStore.repositories.LikeRepository;
 import com.BookStore.projectBookStore.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,27 +12,30 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 import java.util.List;
 
-//Book controller
+// Book controller
 @Controller
 @RequestMapping("/book")
 public class BookController {
 
-    //bookService injection
+    // bookService injection
     @Autowired
     private BookService bookService;
 
+    // Inyección del repositorio de Like para la funcionalidad de likes
+    @Autowired
+    private LikeRepository likeRepository;
 
-    //Form to create a book
+    // Form to create a book
     @GetMapping("/formBook")
     public String bookForm(ModelMap modelMap) {
         return "create";
     }
 
-
-    //Create a book
+    // Create a book
     @PostMapping("/createBook")
     public String createBook(@RequestParam String title, @RequestParam int stock, @RequestParam double price, @RequestParam String image, @RequestParam String author, @RequestParam String publisher, @RequestParam String category, @RequestParam(required = false) Boolean likes, RedirectAttributes redirectAttributes) {
 
@@ -45,8 +50,7 @@ public class BookController {
         }
     }
 
-
-    //Read-List the books
+    // Read-List the books
     @GetMapping("/listBooks")
     public String listBooks(ModelMap modelMap, RedirectAttributes redirectAttributes) {
 
@@ -64,8 +68,7 @@ public class BookController {
         }
     }
 
-
-    //Read-List a specific book
+    // Read-List a specific book
     @GetMapping("/listBook")
     public String listBook(@RequestParam Integer id, ModelMap modelMap, RedirectAttributes redirectAttributes) {
 
@@ -83,7 +86,6 @@ public class BookController {
             return "redirect:/book/listBooks";
         }
     }
-
 
     // Form with data for edit or modify
     @GetMapping("/modifyBook")
@@ -116,8 +118,7 @@ public class BookController {
         }
     }
 
-
-    //Delete a book
+    // Delete a book
     @PostMapping("/deleteBook")
     public String deleteBook(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
 
@@ -134,6 +135,34 @@ public class BookController {
             redirectAttributes.addFlashAttribute("error", "error: " + e.getMessage());
         }
         return "redirect:/book/listBooks";
+    }
+
+    // Endpoint para dar like a un libro (funcionalidad de likes)
+    @PostMapping("/{id}/like")
+    public String likeBook(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            // Si no existe el libro, se lanzará la excepción
+            Book book = bookService.findById(id);
+
+            // Lógica de likes: crear y guardar el like asociado al libro
+            Like like = new Like(book);
+            likeRepository.save(like);
+
+            // Agregar el like a la lista de likes del libro
+            book.getLikes().add(like);
+
+            // Actualizar el libro (si es necesario, dependiendo de la configuración de cascada)
+            bookService.modifyBook(book.getId(), book.getTitle(), book.getStock(), book.getPrice(),
+                    book.getImage(), book.getAuthor(), book.getPublisher(),
+                    book.getCategory(), false);
+
+            return "redirect:/book/listBook?id=" + id;
+
+        } catch (Exception e) {
+            // Captura la excepción lanzada por el servicio
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/book/listBooks";
+        }
     }
 
 

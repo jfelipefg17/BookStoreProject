@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 @Controller
@@ -22,21 +21,23 @@ public class ReviewController {
 
     @Autowired
     private BookRepository bookRepository;
-    
-    @Autowired
-    private LikeRepository likeRepository; // nuevo repositorio para Like
 
+    @Autowired
+    private LikeRepository likeRepository;
+
+    // Agregar una reseña al libro
     @PostMapping
     public String addReview(@PathVariable Integer bookId, @RequestParam String name, @RequestParam String description) {
         Optional<Book> bookOptional = bookRepository.findById(bookId);
         if (bookOptional.isPresent()) {
             Book book = bookOptional.get();
             Review review = new Review(name, description, book);
-            review.setLikes(0);
+            // No es necesario establecer likes a 0, ya que la lista ya está inicializada vacía.
             reviewRepository.save(review);
         }
         return "redirect:/books/" + bookId;
     }
+
 
     @GetMapping("/{reviewId}/edit")
     public String editReviewForm(@PathVariable Integer bookId, @PathVariable Long reviewId, Model model) {
@@ -49,8 +50,8 @@ public class ReviewController {
 
     @PostMapping("/{reviewId}/update")
     public String updateReview(@PathVariable Integer bookId, @PathVariable Long reviewId,
-                                @RequestParam("name") String name,
-                                @RequestParam("description") String description) {
+                               @RequestParam("name") String name,
+                               @RequestParam("description") String description) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
         review.setName(name);
@@ -65,23 +66,19 @@ public class ReviewController {
         reviewRepository.deleteById(reviewId);
         return "redirect:/books/" + bookId;
     }
-    
-    // Nuevo endpoint para agregar un like a la reseña
+
+    // Endpoint para dar like a una reseña
     @PostMapping("/{reviewId}/like")
     public String likeReview(@PathVariable Integer bookId, @PathVariable Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
-
-        // Crear un nuevo objeto Like y asignarlo a la review (usamos entityType "review")
-        Like like = new Like();
-        like.setIdEntity(review.getId().intValue());
-        like.setEntityType("review");
+        // Crear y guardar el like asociado a la reseña (sin asignar un usuario)
+        Like like = new Like(review);
         likeRepository.save(like);
-
-        // Actualizamos el contador de likes (por ejemplo, incrementamos el valor)
-        review.setLikes(review.getLikes() + 1);
+        // Agregar el like a la lista de likes de la reseña
+        review.getLikes().add(like);
         reviewRepository.save(review);
-        
         return "redirect:/books/" + bookId;
     }
+
 }
