@@ -1,0 +1,11 @@
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\controllers\BookController.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\entities\Author.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\entities\Book.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\entities\BookOrder.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\entities\Category.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\entities\Client.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\entities\Like.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\entities\Publisher.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\ProjectBookStoreApplication.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\repositories\BookRepository.java
+E:\Santiago\Java\bookStoreProject\bookStoreProject\projectBookStore\src\main\java\com\BookStore\projectBookStore\services\BookService.java
