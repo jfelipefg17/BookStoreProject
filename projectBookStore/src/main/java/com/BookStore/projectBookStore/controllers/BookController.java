@@ -207,5 +207,15 @@ public class BookController {
     }
 
 
+    @GetMapping("/moreReviews")
+    public String listBooksByReviews(ModelMap modelMap) {
+        try {
+            List<Book> books = bookService.searchAllBookOrderedByReviews();
+            modelMap.addAttribute("books", books);
+        } catch (Exception e) {
+            modelMap.addAttribute("error", "Error listing books by reviews: " + e.getMessage());
+        }
+        return "moreReviewedBooks";
+    }
 
 }
