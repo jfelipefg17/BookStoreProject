@@ -21,13 +21,18 @@ public class ClientService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Client client = clientRepository.findClientByEmail(email) // Buscar por email
+        System.out.println("🔍 Buscando usuario con email: " + email);
+
+        Client client = clientRepository.findClientByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
+
+        System.out.println("✅ Usuario encontrado: " + client.getEmail());
+        System.out.println("🔐 Contraseña en BD (hash): " + client.getPassword());
 
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + client.getRole().name());
 
         return new org.springframework.security.core.userdetails.User(
-                client.getEmail(),  // Usar email como username
+                client.getEmail(),
                 client.getPassword(),
                 Set.of(authority)
         );
