@@ -1,5 +1,13 @@
 package com.BookStore.projectBookStore.services;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 import com.BookStore.projectBookStore.entities.*;
 import com.BookStore.projectBookStore.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +114,36 @@ public class BookService {
     // Find book by name
     public Book findByTitle(String title) {
         return bookRepository.findByTitle(title);
+    }
+
+
+    public void sellBook(int bookId, int quantity) throws Exception {
+        Optional<Book> bookOptional = bookRepository.findById(bookId);
+
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            if (book.getStock() >= quantity) {
+                book.setStock(book.getStock() - quantity);
+                bookRepository.save(book);
+                generateInvoice(book, quantity);
+            } else {
+                throw new Exception("Not enough stock for book ID: " + bookId);
+            }
+        } else {
+            throw new Exception("Book not found with ID: " + bookId);
+        }
+    }
+
+    private void generateInvoice(Book book, int quantity) throws FileNotFoundException, DocumentException {
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream("Invoice_" + book.getId() + ".pdf"));
+        document.open();
+        document.add(new Paragraph("Invoice"));
+        document.add(new Paragraph("Book Title: " + book.getTitle()));
+        document.add(new Paragraph("Quantity: " + quantity));
+        document.add(new Paragraph("Price per unit: " + book.getPrice()));
+        document.add(new Paragraph("Total: " + (book.getPrice() * quantity)));
+        document.close();
     }
 
 }
