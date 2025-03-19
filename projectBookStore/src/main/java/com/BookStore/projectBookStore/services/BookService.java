@@ -125,7 +125,7 @@ public class BookService {
             if (book.getStock() >= quantity) {
                 book.setStock(book.getStock() - quantity);
                 bookRepository.save(book);
-                generateInvoice(book, quantity);
+                generateFactura(book, quantity);
             } else {
                 throw new Exception("Not enough stock for book ID: " + bookId);
             }
@@ -134,16 +134,23 @@ public class BookService {
         }
     }
 
-    private void generateInvoice(Book book, int quantity) throws FileNotFoundException, DocumentException {
+    private void generateFactura(Book book, int quantity) {
         Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("Invoice_" + book.getId() + ".pdf"));
-        document.open();
-        document.add(new Paragraph("Invoice"));
-        document.add(new Paragraph("Book Title: " + book.getTitle()));
-        document.add(new Paragraph("Quantity: " + quantity));
-        document.add(new Paragraph("Price per unit: " + book.getPrice()));
-        document.add(new Paragraph("Total: " + (book.getPrice() * quantity)));
-        document.close();
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream("Factura_" + book.getId() + ".pdf"));
+            document.open();
+            document.add(new Paragraph("Factura"));
+            document.add(new Paragraph("Book Title: " + book.getTitle()));
+            document.add(new Paragraph("Quantity: " + quantity));
+            document.add(new Paragraph("Price per unit: " + book.getPrice()));
+            document.add(new Paragraph("Total: " + (book.getPrice() * quantity)));
+        } catch (FileNotFoundException | DocumentException e) {
+            // Log the error
+            System.err.println("Error generating PDF: " + e.getMessage());
+            // Optionally, rethrow the exception or handle it as needed
+        } finally {
+            document.close();
+        }
     }
 
 }
