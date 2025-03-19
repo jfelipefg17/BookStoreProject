@@ -18,13 +18,41 @@
     <div th:if="${book}">
         <p><strong>ID:</strong> <span th:text="${book.id}"></span></p>
         <p><strong>Title:</strong> <span th:text="${book.title}"></span></p>
-        <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
-        <p><strong>Publisher:</strong> <span th:text="${book.publisher}"></span></p>
-        <p><strong>Category:</strong> <span th:text="${book.category}"></span></p>
+        <p><strong>Author:</strong> <span th:text="${book.author.getName()}"></span></p>
+        <p><strong>Publisher:</strong> <span th:text="${book.publisher.getName()}"></span></p>
+        <p><strong>Category:</strong> <span th:text="${book.category.getName()}"></span></p>
         <p><strong>Stock:</strong> <span th:text="${book.stock}"></span></p>
         <p><strong>Price:</strong> $<span th:text="${book.price}"></span></p>
         <p><strong>Likes:</strong> <span th:text="${book.likes} ? 'Yes' : 'No'"></span></p>
         <img th:src="${book.image}" alt="Book Image">
+        <div>
+            <h2>Reseñas</h2>
+            
+            
+            <div th:if="${book.reviews != null and !book.reviews.isEmpty()}">
+                <div th:each="review : ${book.reviews}">
+                    <hr>
+                    <p><strong>Usuario:</strong> <span th:text="${review.name}"></span></p>
+                    <p><strong>Comentario:</strong> <span th:text="${review.description}"></span></p>
+                </div>
+            </div>
+            
+            <p th:if="${book.reviews == null or book.reviews.isEmpty()}">Este libro aún no tiene reseñas.</p>
+            
+          
+            <h3>Añadir reseña</h3>
+            <form th:action="@{/books/{bookId}/reviews(bookId=${book.id})}" method="post">
+                <p>
+                    <label for="name">Usuario:</label>
+                    <input type="text" id="name" name="name" required>
+                </p>
+                <p>
+                    <label for="description">Comentario:</label><br>
+                    <textarea id="description" name="description" rows="4" cols="50" required></textarea>
+                </p>
+                <button type="submit">Enviar reseña</button>
+            </form>
+        </div>
     </div>
     <a th:href="@{/book/listBooks}">Go Back</a>
     <a th:href="@{/book/modifyBook(id=${book.id})}">Modify Book</a>

@@ -1,90 +1,64 @@
 package com.BookStore.projectBookStore.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-
-import java.util.ArrayList;
+import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
-@jakarta.persistence.Table(name = "likes")
+@Table(name = "likes")
 public class Like {
 
-    @jakarta.persistence.Id
-    @jakarta.persistence.GeneratedValue
-    @PrimaryKeyJoinColumn
-    private int id = 0;
-    @ManyToMany
-    @jakarta.persistence.JoinTable(
-        name = "user_likes",
-        joinColumns = @jakarta.persistence.JoinColumn(name = "like_id"),
-        inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "user_id")
-    )
-    private List<Client> clients = new ArrayList<>();
-    private int idEntity = 0;
-    private String entityType = "";
-    private Date date = new Date();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Like() {}
+    // Por el momento, la asociación con Client es opcional
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "user_id")
+    private Client client;
 
-    public Like(int id, List<Client> clients, int idEntity, String entityType, Date date) {
-        this.id = id;
-        this.clients = clients;
-        this.idEntity = idEntity;
-        this.entityType = entityType;
-        this.date = date;
+    // Asociación opcional a Book (se llena solo si el like es para un libro)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "book_id")
+    private Book book;
+
+    // Asociación opcional a Review (se llena solo si el like es para una reseña)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "review_id")
+    private Review review;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date", nullable = false)
+    private Date date;
+
+    public Like() {
+        this.date = new Date();
     }
 
-    public int getId() {
-        return id;
+    // Constructor para like en un Book (por ahora no asignamos el client)
+    public Like(Book book) {
+        this.book = book;
+        this.date = new Date();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    // Constructor para like en una Review (por ahora no asignamos el client)
+    public Like(Review review) {
+        this.review = review;
+        this.date = new Date();
     }
 
-    public List<Client> getUsers() {
-        return clients;
-    }
+    // Getters y setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setUsers(List<Client> clients) {
-        this.clients = clients;
-    }
+    public Client getClient() { return client; }
+    public void setClient(Client client) { this.client = client; }
 
-    public int getIdEntity() {
-        return idEntity;
-    }
+    public Book getBook() { return book; }
+    public void setBook(Book book) { this.book = book; }
 
-    public void setIdEntity(int idEntity) {
-        this.idEntity = idEntity;
-    }
+    public Review getReview() { return review; }
+    public void setReview(Review review) { this.review = review; }
 
-    public String getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(String entityType) {
-        this.entityType = entityType;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    @Override
-    public String toString() {
-        return "Like{" +
-                "id=" + id +
-                ", users=" + clients +
-                ", idEntity=" + idEntity +
-                ", entityType='" + entityType + '\'' +
-                ", date=" + date +
-                '}';
-    }
+    public Date getDate() { return date; }
+    public void setDate(Date date) { this.date = date; }
 }

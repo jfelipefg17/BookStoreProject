@@ -5,16 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Store</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 200px;
+            margin-top: 20px;
+        }
+        .btn {
+            display: block;
+            padding: 10px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #333333;;
+        }
+    </style>
 </head>
 <body>
 <nav th:replace="fragments/nav :: nav"></nav>
 
+<h2>Bienvenido, <span th:text="${username}"></span></h2>
+
 <main>
     <h2>Book Store</h2>
-    <a th:href="@{/book/formBook}">Crear Libro</a>
-    <a th:href="@{/book/listBooks}">Lista de Libros</a>
-    <a th:href="@{/book/findByName}">Buscar Libro por Nombre</a>
+    <div class="btn-container">
+        <a th:href="@{/book/findByName}" class="btn">Find book by name</a>
+        <a th:href="@{/book/moreReviews}" class="btn">The books with the most reviews</a>
+    </div>
 </main>
+
+<a href="/logout" class="btn" style="margin-top: 20px;">Cerrar sesión</a>
 
 <footer th:replace="fragments/footer :: footer"></footer>
 </body>

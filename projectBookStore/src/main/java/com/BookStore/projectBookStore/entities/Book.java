@@ -1,7 +1,6 @@
 package com.BookStore.projectBookStore.entities;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +12,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String title;  // <- Corregido de "tittle" a "title"
-
+    private String title;  // Corregido de "tittle" a "title"
     private int stock;
     private double price;
     private String image;
@@ -32,11 +30,14 @@ public class Book {
     private Category category;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
-    private List<Like> likes;
+    private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
 
     public Book() {}
 
-    public Book(String title, int stock, double price, String image, Author author, Publisher publisher, Category category) {
+    public Book(String title, int stock, double price, String image, Author author, Publisher publisher, Category category, List<Like> likes, List<Review> reviews) {
         this.title = title;
         this.stock = stock;
         this.price = price;
@@ -44,6 +45,8 @@ public class Book {
         this.author = author;
         this.publisher = publisher;
         this.category = category;
+        this.likes = likes;
+        this.reviews = reviews;
     }
 
     public int getId() {
@@ -58,8 +61,8 @@ public class Book {
         return title;
     }
 
-    public void setTitle(String tittle) {
-        this.title = tittle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getStock(){
@@ -110,6 +113,14 @@ public class Book {
         this.category = category;
     }
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     public List<Like> getLikes() {
         return likes;
     }
@@ -118,12 +129,11 @@ public class Book {
         this.likes = likes;
     }
 
-
     @Override
     public String toString() {
         return "Book{" +
                 "id=" + id +
-                ", tittle='" + title + '\'' +
+                ", title='" + title + '\'' +
                 ", stock=" + stock +
                 ", price=" + price +
                 ", image='" + image + '\'' +
@@ -131,6 +141,7 @@ public class Book {
                 ", publisher=" + publisher +
                 ", category=" + category +
                 ", likes=" + likes +
+                ", reviews=" + reviews +
                 '}';
     }
 }

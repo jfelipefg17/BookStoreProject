@@ -1,11 +1,16 @@
 package com.BookStore.projectBookStore.services;
 
-import com.BookStore.projectBookStore.entities.Author;
-import com.BookStore.projectBookStore.entities.Book;
-import com.BookStore.projectBookStore.entities.Publisher;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
+import com.BookStore.projectBookStore.entities.*;
 import com.BookStore.projectBookStore.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +25,7 @@ public class BookService {
     private BookRepository bookRepository;
 
     //Create book
-    public void createBook(String title, int stock, double price, String image, Author author, Publisher publisher, String category, Boolean likes) {
+    public void createBook(String title, int stock, double price, String image, Author author, Publisher publisher, Category category, List<Like>likes, List<Review>reviews) {
 
         Book book = new Book();
         book.setTitle(title);
@@ -31,6 +36,7 @@ public class BookService {
         book.setPublisher(publisher);
         book.setCategory(category);
         book.setLikes(likes);
+        book.setReviews(reviews);
         bookRepository.save(book);
     }
 
@@ -53,7 +59,8 @@ public class BookService {
     }
 
     //Update-Modify Book
-    public void modifyBook(Integer id, String title, int stock, double price, String image, Author author, Publisher publisher, String category, boolean likes) throws Exception {
+// Update-Modify Book
+    public void modifyBook(Integer id, String title, int stock, double price, String image, Author author, Publisher publisher, Category category, List<Like> likes, List<Review> reviews) throws Exception {
 
         Optional<Book> bookOptional = bookRepository.findById(id);
 
@@ -67,12 +74,13 @@ public class BookService {
             book.setPublisher(publisher);
             book.setCategory(category);
             book.setLikes(likes);
+            book.setReviews(reviews);
             bookRepository.save(book);
-
         } else {
             throw new Exception("Cannot modify. Book not found with ID: " + id);
         }
     }
+
 
     // Delete Book
     public void deleteBook(Integer id) throws Exception {
@@ -85,9 +93,57 @@ public class BookService {
         }
     }
 
+    // Añadir un método específico para dar like
+    public void addLikeToBook(Integer bookId) throws Exception {
+        Book book = findById(bookId);
+        Like like = new Like(book);
+        book.getLikes().add(like);
+        bookRepository.save(book);
+    }
+
+    public int countLikesForBook(Integer bookId) throws Exception {
+        Book book = findById(bookId);
+        return book.getLikes().size();
+    }
+
+    public List<Book> searchAllBookOrderedByReviews() {
+        // Find bokk by counting reviews
+        return bookRepository.findAllOrderByReviewCountDesc();
+
+    }
     // Find book by name
     public Book findByTitle(String title) {
         return bookRepository.findByTitle(title);
+    }
+
+
+    public void sellBook(int bookId, int quantity) throws Exception {
+        Optional<Book> bookOptional = bookRepository.findById(bookId);
+
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            if (book.getStock() >= quantity) {
+                book.setStock(book.getStock() - quantity);
+                bookRepository.save(book);
+                generateInvoice(book, quantity);
+            } else {
+                throw new Exception("Not enough stock for book ID: " + bookId);
+            }
+        } else {
+            throw new Exception("Book not found with ID: " + bookId);
+        }
+    }
+
+    private void generateInvoice(Book book, int quantity) throws FileNotFoundException, DocumentException {
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream("Invoice_" + book.getId() + ".pdf"));
+        document.open();
+        document.add(new Paragraph("Invoice"));
+        document.add(new Paragraph("Book Title: " + book.getTitle()));
+        document.add(new Paragraph("Quantity: " + quantity));
+        document.add(new Paragraph("Price per unit: " + book.getPrice()));
+        document.add(new Paragraph("Total: " + (book.getPrice() * quantity)));
+        document.close();
     }
 
 }

@@ -1,25 +1,44 @@
 package com.BookStore.projectBookStore.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
-@jakarta.persistence.Table(name = "users")
+@Table(name = "users")
 public class Client {
 
-    @jakarta.persistence.Id
-    @jakarta.persistence.GeneratedValue
-    @PrimaryKeyJoinColumn
-    private int id = 0;
-    private String name = "";
-    private String email = "";
-    private String password = "";
-    private String role = "";
-    @jakarta.persistence.OneToMany
-    private List<BookOrder> bookOrders = new ArrayList<>();
-    private List<Book> FavBooks = new ArrayList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
+    @Column(nullable = false, unique = true, length = 255)
+    private String email;
+
+    @Column(nullable = false, length = 255)
+    private String name;
+
+    @Column(nullable = false, length = 255)
+    private String password;
+
+    @Enumerated(EnumType.STRING)  // Guarda como "USER" o "ADMIN" en la BD
+    @Column(nullable = false)
+    private Role role;
+
+    // Getters y Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) {
+        this.password = new BCryptPasswordEncoder().encode(password); // Encripta la contraseña antes de guardarla
+    }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }

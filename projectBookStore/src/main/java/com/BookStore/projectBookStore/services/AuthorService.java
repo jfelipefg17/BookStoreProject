@@ -3,7 +3,9 @@ package com.BookStore.projectBookStore.services;
 
 import com.BookStore.projectBookStore.entities.Author;
 import com.BookStore.projectBookStore.entities.Book;
+import com.BookStore.projectBookStore.entities.Category;
 import com.BookStore.projectBookStore.repositories.AuthorRepository;
+import com.BookStore.projectBookStore.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,7 @@ public class AuthorService {
     }
 
     //Read-Search all authors
-    public List<Author> searchAllBook() {
+    public List<Author> searchAllAuthors() {
         return authorRepository.findAll();
     }
 
@@ -42,8 +44,21 @@ public class AuthorService {
         }
     }
 
+    //Read-Search specific author by name
+    public Author findByName(String name) throws Exception {
+
+        Optional<Author> authorOptional = authorRepository.findByName(name);
+
+        if (authorOptional.isPresent()) {
+            return authorOptional.get();
+
+        } else {
+            return null;
+        }
+    }
+
     //Update-Modify Author
-    public void modifyBook(int id, String name) throws Exception {
+    public void modifyAuthors(int id, String name) throws Exception {
 
         Optional<Author> authorOptional = authorRepository.findById(id);
 
@@ -59,7 +74,7 @@ public class AuthorService {
     }
 
     // Delete Author
-    public void deleteBook(Integer id) throws Exception {
+    public void deleteAuthor(Integer id) throws Exception {
 
         if (authorRepository.findById(id).isPresent()) {
             authorRepository.deleteById(id);
@@ -68,4 +83,15 @@ public class AuthorService {
             throw new Exception("Cannot delete. Author not found with ID: " + id);
         }
     }
+
+    public Author save(Author author) throws Exception {
+        try {
+            authorRepository.save(author);
+            return author;
+        }catch (Exception e) {
+            throw new Exception("Cannot save. Author not found with name: " + author.getName());
+        }
+    }
+
+
 }

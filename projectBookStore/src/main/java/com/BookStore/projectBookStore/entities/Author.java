@@ -3,11 +3,9 @@ package com.BookStore.projectBookStore.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 
-
 @Entity
 @jakarta.persistence.Table(name = "authors")
 public class Author {
-    
 
     @jakarta.persistence.Id
     @jakarta.persistence.GeneratedValue
@@ -15,6 +13,7 @@ public class Author {
     private int id = 0;
     private String name = "";
 
+    
     public Author() {}
 
     public Author(int i, String name) {

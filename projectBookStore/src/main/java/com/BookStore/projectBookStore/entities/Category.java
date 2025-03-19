@@ -1,7 +1,9 @@
 package com.BookStore.projectBookStore.entities;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.persistence.PrimaryKeyJoinColumn;
+
+import java.util.List;
 
 @Entity
 @jakarta.persistence.Table(name = "categories")
@@ -12,6 +14,9 @@ public class Category {
     @PrimaryKeyJoinColumn
     private int id = 0;
     private String name = "";
+
+    @OneToMany(mappedBy = "category")
+    private List<Book> books;
 
     public Category() {}
 
@@ -34,6 +39,14 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 
     @Override

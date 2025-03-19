@@ -18,8 +18,10 @@ public interface PublisherRepository extends JpaRepository<Publisher, Integer> {
     Optional<Publisher> findById(Integer id);
 
     // Save-Update publisher
-    Author save(Publisher publisher);
+    Publisher save(Publisher publisher);
 
     // Delete publisher
     void deleteById(Integer id);
+
+    Optional<Publisher> findByName(String name);
 }
