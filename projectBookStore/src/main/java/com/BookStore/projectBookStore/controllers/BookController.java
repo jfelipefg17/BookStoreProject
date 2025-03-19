@@ -165,8 +165,16 @@ public class BookController {
             Publisher publisher = publisherService.findById(publisherId);
             Category category = categoryService.findById(categoryId);
 
-            if (author == null || publisher == null || category == null) {
-                redirectAttributes.addFlashAttribute("error", "Invalid author, publisher, or category.");
+            if (author == null) {
+                redirectAttributes.addFlashAttribute("error", "Invalid author.");
+                return "redirect:/book/modifyBook?id=" + id;
+            }
+            if (publisher == null) {
+                redirectAttributes.addFlashAttribute("error", "Invalid publisher.");
+                return "redirect:/book/modifyBook?id=" + id;
+            }
+            if (category == null) {
+                redirectAttributes.addFlashAttribute("error", "Invalid category.");
                 return "redirect:/book/modifyBook?id=" + id;
             }
 

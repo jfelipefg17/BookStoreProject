@@ -20,23 +20,23 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable int id) {
+    public Category getCategoryById(@PathVariable int id) throws Exception {
         return categoryService.findById(id);
     }
 
     @PostMapping
-    public Category createCategory(@RequestBody Category category) {
+    public Category createCategory(@RequestBody Category category) throws Exception {
         return categoryService.save(category);
     }
 
     @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable int id, @RequestBody Category category) {
+    public Category updateCategory(@PathVariable int id, @RequestBody Category category) throws Exception {
         category.setId(id);
         return categoryService.save(category);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable int id) {
+    public void deleteCategory(@PathVariable int id) throws Exception {
         categoryService.deleteById(id);
     }
 }

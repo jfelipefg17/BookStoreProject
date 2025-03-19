@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
 }
+
 .container {
     max-width: 600px;
     margin: auto;
@@ -10,6 +11,7 @@ body {
     border-radius: 5px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
+
 nav ul {
     list-style-type: none;
     padding: 0;
@@ -17,13 +19,16 @@ nav ul {
     overflow: hidden;
     display: flex;
 }
+
 nav ul li {
     padding: 14px 20px;
 }
+
 nav ul li a {
     color: white;
     text-decoration: none;
 }
+
 footer {
     text-align: center;
     padding: 10px;

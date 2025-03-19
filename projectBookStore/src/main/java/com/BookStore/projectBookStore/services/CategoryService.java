@@ -41,6 +41,10 @@ public class CategoryService {
         }
     }
 
+    public List<Category> findAll(){
+        return categoryRepository.findAll();
+    }
+
     //Read-Search specific category by name
     public Category findByName(String name) throws Exception {
 
@@ -71,7 +75,7 @@ public class CategoryService {
     }
 
     // Delete Category
-    public void deleteCategory(Integer id) throws Exception {
+    public void deleteById(Integer id) throws Exception {
 
         if (categoryRepository.findById(id).isPresent()) {
             categoryRepository.deleteById(id);
