@@ -19,11 +19,6 @@ public class CategoryController {
         return categoryService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable int id) {
-        return categoryService.findById(id);
-    }
-
     @PostMapping
     public Category createCategory(@RequestBody Category category) {
         return categoryService.save(category);

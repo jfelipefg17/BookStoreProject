@@ -1,6 +1,8 @@
 package com.BookStore.projectBookStore.controllers;
 
 import com.BookStore.projectBookStore.entities.*;
+import com.BookStore.projectBookStore.repositories.BookRepository;
+import com.BookStore.projectBookStore.repositories.CategoryRepository;
 import com.BookStore.projectBookStore.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -175,6 +177,15 @@ public class BookController {
         return "findByName";
     }
 
-
+    @GetMapping("/category/{categoryId}")
+    public String getBooksByCategory(@PathVariable int categoryId, ModelMap modelMap) {
+        try {
+            List<Book> books = bookService.findBooksByCategory(categoryId);
+            modelMap.addAttribute("books", books);
+        } catch (Exception e) {
+            modelMap.addAttribute("error", "Error retrieving books by category: " + e.getMessage());
+        }
+        return "listBooks";
+    }
 
 }

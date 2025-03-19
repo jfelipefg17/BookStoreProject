@@ -29,6 +29,10 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
     //Read-Search specific category by ID
     public Category findById(int id) throws Exception {
 
@@ -40,6 +44,14 @@ public class CategoryService {
         } else {
             throw new Exception("Category not found with ID: " + id);
         }
+    }
+
+    public Category save(Category category) {
+        return categoryRepository.save(category);
+    }
+
+    public void deleteById(int id) {
+        categoryRepository.deleteById(id);
     }
 
     //Update-Modify Category

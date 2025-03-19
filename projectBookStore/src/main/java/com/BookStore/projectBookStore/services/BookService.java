@@ -1,5 +1,6 @@
 package com.BookStore.projectBookStore.services;
 
+import com.BookStore.projectBookStore.repositories.CategoryRepository;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -132,6 +133,15 @@ public class BookService {
         } else {
             throw new Exception("Book not found with ID: " + bookId);
         }
+    }
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    public List<Book> findBooksByCategory(int categoryId) throws Exception {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new Exception("Category not found with ID: " + categoryId));
+        return bookRepository.findByCategory(category);
     }
 
     private void generateFactura(Book book, int quantity) {

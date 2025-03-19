@@ -14,7 +14,7 @@
 
     <form th:action="@{/book/findByName}" method="get">
         <label for="title">Nombre del libro:</label>
-        <input type="text" id="title" name="title" required>
+        <input type="text" id="title" name="title" Category="Category" required>
         <button type="submit">Buscar</button>
     </form>
 
@@ -27,6 +27,7 @@
                 <th>Autor</th>
                 <th>Precio</th>
                 <th>Stock</th>
+                <th>Category</th>
             </tr>
             <tr>
                 <td th:text="${book.id}"></td>
@@ -34,6 +35,7 @@
                 <td th:text="${book.author}"></td>
                 <td th:text="${book.price}"></td>
                 <td th:text="${book.stock}"></td>
+                <td th:text="${book.Category}"></td>
             </tr>
         </table>
     </div>
