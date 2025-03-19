@@ -8,6 +8,8 @@
 </head>
 <body>
 <nav th:replace="fragments/nav :: nav"></nav>
+<h2>Bienvenido, <span th:text="${username}"></span></h2>
+
 
 <main>
     <h2>Book Store</h2>
@@ -16,6 +18,8 @@
     <a th:href="@{/book/findByName}">Buscar Libro por Nombre</a>
 
 </main>
+
+<a href="/logout">Cerrar sesión</a>
 
 <footer th:replace="fragments/footer :: footer"></footer>
 </body>
