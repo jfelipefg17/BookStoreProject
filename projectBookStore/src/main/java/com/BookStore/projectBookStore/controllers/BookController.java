@@ -3,6 +3,7 @@ package com.BookStore.projectBookStore.controllers;
 import com.BookStore.projectBookStore.entities.*;
 import com.BookStore.projectBookStore.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Locale;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 @Controller
 @RequestMapping("/book")
@@ -29,14 +32,44 @@ public class BookController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("/home")
-    public String homePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
+    private ClientService clientService;    @GetMapping("/home")
+    public String homePage(@AuthenticationPrincipal UserDetails userDetails, Model model, Locale locale) {
         if (userDetails != null) {
-            model.addAttribute("username", userDetails.getUsername());
+            // Verificar si tenemos un ClientUserDetails
+            if (userDetails instanceof com.BookStore.projectBookStore.security.ClientUserDetails) {
+                com.BookStore.projectBookStore.security.ClientUserDetails clientDetails = 
+                    (com.BookStore.projectBookStore.security.ClientUserDetails) userDetails;
+                
+                String clientName = clientDetails.getClientName();
+                model.addAttribute("username", clientName);
+                
+                System.out.println("Usuario autenticado (ClientUserDetails): " + clientName);
+            } else {
+                // Usar el nombre de usuario directamente si no es un ClientUserDetails
+                String username = userDetails.getUsername();
+                model.addAttribute("username", username);
+                
+                System.out.println("Usuario autenticado (username): " + username);
+            }
+            
+            // No añadir los atributos de depuración cuando el usuario está autenticado
         } else {
-            model.addAttribute("username", "Invitado");
+            // Usar messageSource para obtener "Invitado" en el idioma actual
+            String guestName = messageSource.getMessage("user.guest", null, locale);
+            model.addAttribute("username", guestName);
+            
+            // Añadir atributos de depuración para verificar la internacionalización
+            model.addAttribute("currentLocale", locale.toString());
+            model.addAttribute("localizedGuest", guestName);
+            model.addAttribute("welcomeMessage", messageSource.getMessage("index.welcomeUser", new Object[]{guestName}, locale));
+            
+            System.out.println("Usuario no autenticado: " + guestName);
         }
-        return "index"; // Redirige a la vista index.html
+        return "index";
     }
 
     @GetMapping("/formBook")
@@ -85,14 +118,12 @@ public class BookController {
                 category = new Category();
                 category.setName(categoryName);
                 category = categoryService.save(category);
-            }
-
-            // Crear el libro con los objetos creados
+            }            // Crear el libro con los objetos creados
             bookService.createBook(title, stock, price, image, author, publisher, category, likes, reviews);
 
-            redirectAttributes.addFlashAttribute("success", "The book was successfully uploaded");
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("book.create.success", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error creating book: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("book.create.error", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale()));
         }
         return "redirect:/book/listBooks";
     }
@@ -107,19 +138,22 @@ public class BookController {
             modelMap.addAttribute("error", "Error listing books: " + e.getMessage());
         }
         return "listBooks";
-    }
-
-    @GetMapping("/listBook")
-    public String listBook(@RequestParam Integer id, ModelMap modelMap, RedirectAttributes redirectAttributes) {
+    }    @GetMapping("/listBook")
+    public String listBook(@RequestParam(required = false) Integer id, ModelMap modelMap, RedirectAttributes redirectAttributes) {
         try {
+            if (id == null) {
+                redirectAttributes.addFlashAttribute("error", messageSource.getMessage("book.id.required", null, LocaleContextHolder.getLocale()));
+                return "redirect:/book/listBooks";
+            }
+            
             Book book = bookService.findById(id);
             if (book == null) {
-                redirectAttributes.addFlashAttribute("error", "Book not found with id: " + id);
+                redirectAttributes.addFlashAttribute("error", messageSource.getMessage("book.notFound.withId", new Object[]{id}, LocaleContextHolder.getLocale()));
                 return "redirect:/book/listBooks";
             }
             modelMap.addAttribute("book", book);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error retrieving book: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error.generic", null, LocaleContextHolder.getLocale()));
         }
         return "book";
     }
@@ -176,23 +210,19 @@ public class BookController {
             if (category == null) {
                 redirectAttributes.addFlashAttribute("error", "Invalid category.");
                 return "redirect:/book/modifyBook?id=" + id;
-            }
-
-            bookService.modifyBook(id, title, stock, price, image, author, publisher, category, likes, reviews);
-            redirectAttributes.addFlashAttribute("success", "The book was successfully modified.");
+            }            bookService.modifyBook(id, title, stock, price, image, author, publisher, category, likes, reviews);
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("book.update.success", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error modifying book: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("book.update.error", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale()));
         }
         return "redirect:/book/listBooks";
-    }
-
-    @PostMapping("/deleteBook")
+    }    @PostMapping("/deleteBook")
     public String deleteBook(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         try {
             bookService.deleteBook(id);
-            redirectAttributes.addFlashAttribute("success", "The book was successfully deleted.");
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("book.delete.success", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error deleting book: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("book.delete.error", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale()));
         }
         return "redirect:/book/listBooks";
     }
@@ -201,27 +231,25 @@ public class BookController {
     public String findByName(@RequestParam(required = false) String title, ModelMap modelMap) {
         try {
             if (title != null && !title.isEmpty()) {
-                Book book = bookService.findByTitle(title);
-                if (book != null) {
+                Book book = bookService.findByTitle(title);                if (book != null) {
                     modelMap.addAttribute("book", book);
                 } else {
-                    modelMap.addAttribute("error", "No book found with that title.");
+                    modelMap.addAttribute("error", messageSource.getMessage("book.notFound", null, LocaleContextHolder.getLocale()));
                 }
             }
         } catch (Exception e) {
-            modelMap.addAttribute("error", "Error searching for book: " + e.getMessage());
+            modelMap.addAttribute("error", messageSource.getMessage("error.generic", null, LocaleContextHolder.getLocale()));
         }
         return "findByName";
     }
-
-
     @GetMapping("/moreReviews")
     public String listBooksByReviews(ModelMap modelMap) {
         try {
             List<Book> books = bookService.searchAllBookOrderedByReviews();
             modelMap.addAttribute("books", books);
         } catch (Exception e) {
-            modelMap.addAttribute("error", "Error listing books by reviews: " + e.getMessage());
+            modelMap.addAttribute("error", messageSource.getMessage("error.listing.reviews", 
+                                          new Object[]{e.getMessage()}, LocaleContextHolder.getLocale()));
         }
         return "moreReviewedBooks";
     }

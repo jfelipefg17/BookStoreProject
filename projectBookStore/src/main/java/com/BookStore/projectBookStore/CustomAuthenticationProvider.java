@@ -27,12 +27,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         var userDetails = clientService.loadUserByUsername(email);
 
-        System.out.println("🔒 Clave en la base de datos (hash): " + userDetails.getPassword());
-
-        // Aquí Spring Security automáticamente compara el hash con la ingresada
+        System.out.println("🔒 Clave en la base de datos (hash): " + userDetails.getPassword());        // Aquí Spring Security automáticamente compara el hash con la ingresada
         return new UsernamePasswordAuthenticationToken(
-                userDetails.getUsername(),
-                userDetails.getPassword(),
+                userDetails,  // Usar el objeto UserDetails completo
+                password,  // La contraseña en texto plano que se usó para la autenticación
                 userDetails.getAuthorities()
         );
     }
