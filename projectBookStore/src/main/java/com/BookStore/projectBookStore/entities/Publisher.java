@@ -15,7 +15,7 @@ public class Publisher {
 
     public Publisher() {}
 
-    public Publisher(int i, String name) {
+    public Publisher(int id, String name) {
         this.id = id;
         this.name = name;
     }
