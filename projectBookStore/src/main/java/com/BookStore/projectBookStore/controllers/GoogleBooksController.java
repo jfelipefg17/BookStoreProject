@@ -25,7 +25,7 @@ public class GoogleBooksController {
     // Muestra el formulario de búsqueda
     @GetMapping("/form")
     public String showSearchForm() {
-        return "books/searchForm"; // Ruta a la vista del formulario
+        return "searchForm"; 
     }
 
     // Procesa la búsqueda y muestra resultados
@@ -34,6 +34,7 @@ public class GoogleBooksController {
         List<GoogleBookDTO> books = googleBooksService.searchBooks(query);
         model.addAttribute("books", books);
         model.addAttribute("query", query);
-        return "books/searchResults"; // Vista con los resultados
+        return "searchResults"; 
     }
 }
+
