@@ -20,11 +20,11 @@ public class PdfReportGenerator implements ReportGenerator {
         document.add(new Paragraph("Editorial: " + data.getPublisher()));
         document.add(new Paragraph("Categoría: " + data.getCategory()));
         document.add(new Paragraph("Precio: $" + data.getPrice()));
-        if (data.getOrder() != null) {
-            document.add(new Paragraph("ID Orden: " + data.getOrder().getId()));
-            if (data.getOrder().getClient() != null) {
-                document.add(new Paragraph("Cliente de la Orden: " + data.getOrder().getClient()));
-            }
+        if (data.getPedidoId() != null) {
+            document.add(new Paragraph("ID Pedido: " + data.getPedidoId()));
+            document.add(new Paragraph("Usuario Pedido: " + data.getUsuarioPedido()));
+            document.add(new Paragraph("Pago: " + data.getPagoPedido()));
+            document.add(new Paragraph("Descuento: " + (data.isDescuentoPedido() ? "Sí" : "No")));
         }
         // Agrega más campos si los tienes en el DTO
         document.close();

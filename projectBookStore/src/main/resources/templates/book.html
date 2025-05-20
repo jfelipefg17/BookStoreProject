@@ -31,10 +31,18 @@
     <!-- Formulario para crear una orden de este libro -->
     <div>
         <h2>Ordenar este libro</h2>
-        <form th:action="@{/orders/create}" method="post">
-            <input type="hidden" name="bookId" th:value="${book.id}" />
-            <label for="client">Nombre del cliente:</label>
-            <input type="text" id="client" name="client" required />
+        <form th:action="@{/pedidos}" method="post">
+            <input type="hidden" name="items" th:value="${book.title}" />
+            <label for="usuario">Nombre del cliente:</label>
+            <input type="text" id="usuario" name="usuario" required />
+            <label for="pago">Método de pago:</label>
+            <select id="pago" name="pago" required>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+            </select>
+            <label for="descuento">Descuento:</label>
+            <input type="checkbox" id="descuento" name="descuento"/>
             <button type="submit">Ordenar</button>
         </form>
     </div>

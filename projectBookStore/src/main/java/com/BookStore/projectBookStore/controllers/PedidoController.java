@@ -1,12 +1,20 @@
 package com.BookStore.projectBookStore.controllers;
 
 import com.BookStore.projectBookStore.entities.Pedido;
+import com.BookStore.projectBookStore.entities.ReportDataDTO;
 import com.BookStore.projectBookStore.repositories.PedidoRepository;
+import com.BookStore.projectBookStore.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @Controller
@@ -14,6 +22,9 @@ public class PedidoController {
 
     @Autowired
     private PedidoRepository pedidoRepository;
+
+    @Autowired
+    private ReportService reportService;
 
     @GetMapping("/pedidos")
     public String index(Model model) {
@@ -67,6 +78,40 @@ public class PedidoController {
     public String delete(@PathVariable("id") Long id) {
         pedidoRepository.deleteById(id);
         return "redirect:/pedidos";
+    }
+
+    @PostMapping("/pedidos/{id}/download")
+    public ResponseEntity<byte[]> downloadPedidoReport(@PathVariable("id") Long id, @RequestParam String type) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        ReportDataDTO dto = mapPedidoToReportDataDTO(pedido);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            reportService.exportReportToStream(type, dto, baos);
+            String filename = "pedido_" + id + ("pdf".equalsIgnoreCase(type) ? ".pdf" : ".xlsx");
+            String contentType = "pdf".equalsIgnoreCase(type)
+                    ? "application/pdf"
+                    : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(contentType));
+            headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+            return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // Método utilitario para mapear Pedido a ReportDataDTO
+    private ReportDataDTO mapPedidoToReportDataDTO(Pedido pedido) {
+        ReportDataDTO dto = new ReportDataDTO();
+        dto.setPedidoId(pedido.getId());
+        dto.setUsuarioPedido(pedido.getUsuario());
+        dto.setPagoPedido(pedido.getPago());
+        dto.setDescuentoPedido(pedido.isDescuento());
+        dto.setItems(pedido.getItems());
+        return dto;
     }
 }
 
