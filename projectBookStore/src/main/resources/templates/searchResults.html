@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{searchResults.title}">Resultados de búsqueda</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav th:replace="fragments/nav :: nav"></nav>
+
+<div class="container">
+    <h2 th:text="#{searchResults.heading(${query})}">Resultados para: "<span th:text="${query}"></span>"</h2>
+
+    <div th:if="${#lists.isEmpty(books)}">
+        <p th:text="#{searchResults.noResults}">No se encontraron libros para esta búsqueda.</p>
+    </div>
+
+    <div th:each="book : ${books}" class="book-card">
+        <img th:if="${book.thumbnail != null}" th:src="${book.thumbnail}" alt="Portada del libro">
+        <img th:if="${book.thumbnail == null}" src="/img/default-book.png" alt="Sin imagen" />
+
+        <div class="book-details">
+            <h3 th:text="${book.title}">Título del libro</h3>
+            <p><strong th:text="#{searchResults.authors}">Autores:</strong> <span th:text="${book.authors}">Autor desconocido</span></p>
+            <p th:text="${book.description}">Sin descripción disponible.</p>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+
+</body>
+</html>

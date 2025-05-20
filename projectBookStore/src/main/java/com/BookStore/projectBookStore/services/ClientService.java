@@ -2,13 +2,10 @@ package com.BookStore.projectBookStore.services;
 
 import com.BookStore.projectBookStore.entities.Client;
 import com.BookStore.projectBookStore.repositories.ClientRepository;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 public class ClientService implements UserDetailsService {
@@ -19,7 +16,9 @@ public class ClientService implements UserDetailsService {
         this.clientRepository = clientRepository;
     }
 
-    @Override
+    public Client getClientByEmail(String email) {
+        return clientRepository.findClientByEmail(email).orElse(null);
+    }    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         System.out.println("🔍 Buscando usuario con email: " + email);
 
@@ -27,14 +26,10 @@ public class ClientService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
 
         System.out.println("✅ Usuario encontrado: " + client.getEmail());
+        System.out.println("👤 Nombre del cliente: " + client.getName());
         System.out.println("🔐 Contraseña en BD (hash): " + client.getPassword());
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + client.getRole().name());
-
-        return new org.springframework.security.core.userdetails.User(
-                client.getEmail(),
-                client.getPassword(),
-                Set.of(authority)
-        );
+        // Usar nuestra implementación personalizada de UserDetails que incluye el nombre del cliente
+        return new com.BookStore.projectBookStore.security.ClientUserDetails(client);
     }
 }

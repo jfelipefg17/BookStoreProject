@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Libros</title>
+    <title th:text="#{listBooks.pageTitle}">Lista de Libros</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <main>
-    <h2>Books list</h2>
+    <h2 th:text="#{nav.bookList}">Books list</h2>
 
     <div th:if="${error}" class="error">
         <p style="color: red;" th:text="${error}"></p>
@@ -25,11 +25,11 @@
     <table border="1" th:if="${books != null and !books.isEmpty()}">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Price</th>
-            <th>Actions</th>
+            <th th:text="#{table.header.id}">ID</th>
+            <th th:text="#{form.title}">Title</th>
+            <th th:text="#{form.author}">Author</th>
+            <th th:text="#{form.price}">Price</th>
+            <th th:text="#{table.header.actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -40,22 +40,22 @@
             <td th:text="${book.price}"></td>
             <td>
                 <a th:href="@{/book/listBook(id=${book.id})}">
-                    <button type="button">More Info</button>
+                    <button type="button" th:text="#{button.moreInfo}">More Info</button>
                 </a>
                 <form th:action="@{/book/deleteBook}" method="post" style="display:inline;">
                     <input type="hidden" name="id" th:value="${book.id}"/>
-                    <button type="submit">Delete</button>
+                    <button type="submit" th:text="#{form.delete}">Delete</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <p th:if="${books == null or books.isEmpty()}">There isn't books at this moment.</p>
+    <p th:if="${books == null or books.isEmpty()}" th:text="#{listBooks.noBooks}">There isn't books at this moment.</p>
 
     <br>
-    <a th:href="@{/book/formBook}">Create Book</a>
-    <a th:href="@{/book/home}">Menu</a>
+    <a th:href="@{/book/formBook}" th:text="#{nav.createBook}">Create Book</a>
+    <a th:href="@{/book/home}" th:text="#{nav.home}">Menu</a>
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

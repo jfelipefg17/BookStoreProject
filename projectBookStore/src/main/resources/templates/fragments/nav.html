@@ -1,7 +1,13 @@
 <nav th:fragment="nav">
     <img src="/img/logo.jpeg" alt="Logo" />
     <ul>
-        <li><a th:href="@{/book/listBooks}">Book List</a></li>
-        <li><a th:href="@{/book/formBook}">Create Book</a></li>
+        <li><a th:href="@{/book/listBooks}" th:text="#{nav.bookList}">Book List</a></li>
+        <li><a th:href="@{/book/formBook}" th:text="#{nav.createBook}">Create Book</a></li>
+        <li><a th:href="@{/googlebooks/search}" th:text="#{nav.searchGoogleBooks}">Search Google Books</a></li>
     </ul>
+    <!-- Selector de idioma -->
+    <div class="language-selector">
+        <a th:href="@{''(lang=es)}" th:text="#{nav.language.es}">Español</a> | 
+        <a th:href="@{''(lang=en)}" th:text="#{nav.language.en}">English</a>
+    </div>
 </nav>
