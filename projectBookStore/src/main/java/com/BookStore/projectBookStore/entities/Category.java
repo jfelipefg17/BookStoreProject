@@ -1,8 +1,10 @@
 package com.BookStore.projectBookStore.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,8 +17,10 @@ public class Category {
     private int id = 0;
     private String name = "";
 
-    @OneToMany(mappedBy = "category")
-    private List<Book> books;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Book> books = new ArrayList<>();
+
 
     public Category() {}
 

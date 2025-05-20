@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Books</title>
+</head>
+<body>
+<h1>JSON Books</h1>
+<button onclick="copiarJSON()">Copy JSON</button>
+<pre id="json-libros">Loading Books...</pre>
+
+<script>
+    async function copiarJSON() {
+        const response = await fetch('/api/libros');
+        const libros = await response.json();
+        const texto = JSON.stringify(libros, null, 2);
+        await navigator.clipboard.writeText(texto);
+        document.getElementById("json-libros").textContent = texto;
+        alert("¡JSON copiado al portapapeles!");
+    }
+
+    // Mostrar los libros al cargar la página
+    copiarJSON();
+</script>
+</body>
+</html>
