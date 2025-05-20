@@ -4,7 +4,6 @@ import com.BookStore.projectBookStore.entities.ReportDataDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 @Component("excelReportGenerator")
@@ -31,15 +30,13 @@ public class ExcelReportGenerator implements ReportGenerator {
         row.createCell(2).setCellValue(data.getPublisher());
         row.createCell(3).setCellValue(data.getCategory());
         row.createCell(4).setCellValue(data.getPrice());
-        row.createCell(6).setCellValue(data.getOrder() != null ? data.getOrder().getId() : 0);
-        row.createCell(7).setCellValue(
-            data.getOrder() != null && data.getOrder().getClient() != null
-                ? data.getOrder().getClient()
-                : ""
-        );
+        row.createCell(6).setCellValue(data.getPedidoId() != null ? data.getPedidoId() : 0);
+        row.createCell(7).setCellValue(data.getUsuarioPedido() != null ? data.getUsuarioPedido() : "");
+        row.createCell(8).setCellValue(data.getPagoPedido() != null ? data.getPagoPedido() : "");
+        row.createCell(9).setCellValue(data.isDescuentoPedido() ? "Sí" : "No");
 
         // Ajustar tamaño de columnas
-        for (int i = 0; i <= 7; i++) {
+        for (int i = 0; i <= 9; i++) {
             sheet.autoSizeColumn(i);
         }
 

@@ -38,6 +38,15 @@
             </p>
         </div>
     </div>
+
+    <form th:action="@{/pedidos/{id}/download(id=${pedido.id})}" method="post" target="_blank">
+        <input type="hidden" name="type" value="pdf"/>
+        <button type="submit" class="btn btn-primary">Descargar PDF</button>
+    </form>
+    <form th:action="@{/pedidos/{id}/download(id=${pedido.id})}" method="post" target="_blank">
+        <input type="hidden" name="type" value="excel"/>
+        <button type="submit" class="btn btn-secondary">Descargar Excel</button>
+    </form>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>

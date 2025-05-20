@@ -7,9 +7,12 @@ public class ReportDataDTO {
     private String category;
     private double price;
     private String client;
-    private BookOrder order; // Nuevo campo
+    private Long pedidoId;
+    private String usuarioPedido;
+    private String pagoPedido;
+    private boolean descuentoPedido;
+    private String items; // <-- Agregado para reflejar el campo de Pedido
 
-    // Getters y setters
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
@@ -28,6 +31,18 @@ public class ReportDataDTO {
     public String getClient() { return client; }
     public void setClient(String client) { this.client = client; }
 
-    public BookOrder getOrder() { return order; }
-    public void setOrder(BookOrder order) { this.order = order; }
+    public Long getPedidoId() { return pedidoId; }
+    public void setPedidoId(Long pedidoId) { this.pedidoId = pedidoId; }
+
+    public String getUsuarioPedido() { return usuarioPedido; }
+    public void setUsuarioPedido(String usuarioPedido) { this.usuarioPedido = usuarioPedido; }
+
+    public String getPagoPedido() { return pagoPedido; }
+    public void setPagoPedido(String pagoPedido) { this.pagoPedido = pagoPedido; }
+
+    public boolean isDescuentoPedido() { return descuentoPedido; }
+    public void setDescuentoPedido(boolean descuentoPedido) { this.descuentoPedido = descuentoPedido; }
+
+    public String getItems() { return items; }
+    public void setItems(String items) { this.items = items; }
 }
