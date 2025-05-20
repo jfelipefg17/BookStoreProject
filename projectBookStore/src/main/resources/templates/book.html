@@ -28,6 +28,17 @@
     </div>
     <a th:href="@{/book/listBooks}">Go Back</a>
     <a th:href="@{/book/modifyBook(id=${book.id})}">Modify Book</a>
+
+    <!-- Formulario para crear una orden de este libro -->
+    <div>
+        <h2>Ordenar este libro</h2>
+        <form th:action="@{/orders/create}" method="post">
+            <input type="hidden" name="bookId" th:value="${book.id}" />
+            <label for="client">Nombre del cliente:</label>
+            <input type="text" id="client" name="client" required />
+            <button type="submit">Ordenar</button>
+        </form>
+    </div>
 </div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>

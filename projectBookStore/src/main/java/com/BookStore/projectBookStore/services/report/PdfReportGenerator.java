@@ -5,14 +5,14 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Component;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 @Component("pdfReportGenerator")
 public class PdfReportGenerator implements ReportGenerator {
     @Override
-    public void generateReport(ReportDataDTO data, String filePath) throws Exception {
+    public void generateReport(ReportDataDTO data, OutputStream outputStream) throws Exception {
         Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
+        PdfWriter.getInstance(document, outputStream);
         document.open();
         document.add(new Paragraph("Reporte de Libro"));
         document.add(new Paragraph("Título: " + data.getTitle()));

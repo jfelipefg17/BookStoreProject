@@ -5,11 +5,12 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 @Component("excelReportGenerator")
 public class ExcelReportGenerator implements ReportGenerator {
     @Override
-    public void generateReport(ReportDataDTO data, String filePath) throws Exception {
+    public void generateReport(ReportDataDTO data, OutputStream outputStream) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Reporte");
 
@@ -42,9 +43,7 @@ public class ExcelReportGenerator implements ReportGenerator {
             sheet.autoSizeColumn(i);
         }
 
-        FileOutputStream fos = new FileOutputStream(filePath);
-        workbook.write(fos);
-        fos.close();
+        workbook.write(outputStream);
         workbook.close();
     }
 }
