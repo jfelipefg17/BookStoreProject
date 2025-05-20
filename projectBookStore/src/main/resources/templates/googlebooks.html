@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados Google Books</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+<div class="container">
+    <h1>Buscar libros en Google Books</h1>
+
+    <form th:action="@{/books/search}" method="get">
+        <input type="text" name="query" placeholder="Buscar por título, autor..." required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <div th:if="${books != null}">
+        <div th:if="${#lists.isEmpty(books)}">
+            <p>No se encontraron resultados para esta búsqueda.</p>
+        </div>
+
+        <div th:each="book : ${books}" class="book-card">
+            <hr>
+            <h2 th:text="${book.title}">Título</h2>
+            <p><strong>Autores:</strong> <span th:text="${book.authors}">Autores</span></p>
+            <p><strong>Editorial:</strong> <span th:text="${book.publisher}">Editorial</span></p>
+            <p><strong>Fecha de publicación:</strong> <span th:text="${book.publishedDate}">Fecha</span></p>
+            <p><strong>Descripción:</strong> <span th:text="${book.description}">Descripción</span></p>
+            <div th:if="${book.thumbnail != null}">
+                <img th:src="${book.thumbnail}" alt="Portada" style="max-height: 200px;">
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

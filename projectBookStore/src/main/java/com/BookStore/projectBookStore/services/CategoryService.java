@@ -1,7 +1,6 @@
 package com.BookStore.projectBookStore.services;
 
 
-import com.BookStore.projectBookStore.entities.Author;
 import com.BookStore.projectBookStore.entities.Category;
 import com.BookStore.projectBookStore.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,23 @@ public class CategoryService {
         }
     }
 
+    public List<Category> findAll(){
+        return categoryRepository.findAll();
+    }
+
+    //Read-Search specific category by name
+    public Category findByName(String name) throws Exception {
+
+        Optional<Category> categoryOptional = categoryRepository.findByName(name);
+
+        if (categoryOptional.isPresent()) {
+            return categoryOptional.get();
+
+        } else {
+            return null;
+        }
+    }
+
     //Update-Modify Category
     public void modifyCategory(int id, String name) throws Exception {
 
@@ -59,13 +75,22 @@ public class CategoryService {
     }
 
     // Delete Category
-    public void deleteCategory(Integer id) throws Exception {
+    public void deleteById(Integer id) throws Exception {
 
         if (categoryRepository.findById(id).isPresent()) {
             categoryRepository.deleteById(id);
 
         } else {
             throw new Exception("Cannot delete. Category not found with ID: " + id);
+        }
+    }
+
+    public Category save(Category category) throws Exception {
+        try {
+            categoryRepository.save(category);
+            return category;
+        }catch (Exception e) {
+            throw new Exception("Cannot save. Category not found with name: " + category.getName());
         }
     }
 }

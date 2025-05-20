@@ -22,4 +22,6 @@ public interface PublisherRepository extends JpaRepository<Publisher, Integer> {
 
     // Delete publisher
     void deleteById(Integer id);
+
+    Optional<Publisher> findByName(String name);
 }

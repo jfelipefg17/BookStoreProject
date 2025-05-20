@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{listBooks.pageTitle}">Lista de Libros</title>
+    <title th:text="#{index.mostReviewedBooks}">Books by Reviews</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <main>
-    <h2 th:text="#{nav.bookList}">Books list</h2>
+    <h2 th:text="#{index.mostReviewedBooks}">Libros ordenados por cantidad de reviews</h2>
 
     <div th:if="${error}" class="error">
         <p style="color: red;" th:text="${error}"></p>
@@ -19,43 +19,37 @@
     </div>
     <div th:if="${success}" class="success">
         <p style="color: green;" th:text="${success}"></p>
-    </div>
-
-
-    <table border="1" th:if="${books != null and !books.isEmpty()}">
+    </div>    <table border="1" th:if="${books != null and !books.isEmpty()}">
         <thead>
         <tr>
             <th th:text="#{table.header.id}">ID</th>
-            <th th:text="#{form.title}">Title</th>
-            <th th:text="#{form.author}">Author</th>
-            <th th:text="#{form.price}">Price</th>
-            <th th:text="#{table.header.actions}">Actions</th>
+            <th th:text="#{form.title}">Título</th>
+            <th th:text="#{form.author}">Autor</th>
+            <th th:text="#{form.price}">Precio</th>
+            <th>Reviews</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="book : ${books}">
             <td th:text="${book.id}"></td>
             <td th:text="${book.title}"></td>
-            <td th:text="${book.author.getName()}"></td>
+            <td th:text="${book.author}"></td>
             <td th:text="${book.price}"></td>
-            <td>
-                <a th:href="@{/book/listBook(id=${book.id})}">
-                    <button type="button" th:text="#{button.moreInfo}">More Info</button>
+            <td th:text="${book.reviews != null ? book.reviews.size() : 0}"></td>
+            <td>                <a th:href="@{/book/listBook(id=${book.id})}">
+                    <button type="button" th:text="#{button.moreInfo}">Más información</button>
                 </a>
                 <form th:action="@{/book/deleteBook}" method="post" style="display:inline;">
                     <input type="hidden" name="id" th:value="${book.id}"/>
-                    <button type="submit" th:text="#{form.delete}">Delete</button>
+                    <button type="submit" th:text="#{form.delete}">Borrar</button>
                 </form>
             </td>
         </tr>
         </tbody>
-    </table>
-
-    <p th:if="${books == null or books.isEmpty()}" th:text="#{listBooks.noBooks}">There isn't books at this moment.</p>
+    </table>    <p th:if="${books == null or books.isEmpty()}" th:text="#{listBooks.noBooks}">No hay libros en el momento.</p>
 
     <br>
-    <a th:href="@{/book/formBook}" th:text="#{nav.createBook}">Create Book</a>
-    <a th:href="@{/book/home}" th:text="#{nav.home}">Menu</a>
+    <a th:href="@{/book/listBooks}" th:text="#{nav.bookList}">Regresar a libros</a>
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

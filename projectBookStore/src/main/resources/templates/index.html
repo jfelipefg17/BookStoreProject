@@ -1,22 +1,58 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Store</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{index.pageTitle}">Book Store</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+    <style>
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 200px;
+            margin-top: 20px;
+        }
+        .btn {
+            display: block;
+            padding: 10px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #222;
+        }
+    </style>
 </head>
 <body>
-<nav th:replace="fragments/nav :: nav"></nav>
+    <nav th:replace="fragments/nav :: nav"></nav>
 
-<main>
-    <h2>Book Store</h2>
-    <a th:href="@{/book/formBook}">Crear Libro</a>
-    <a th:href="@{/book/listBooks}">Lista de Libros</a>
-    <a th:href="@{/book/findByName}">Buscar Libro por Nombre</a>
+    <h2 th:text="#{index.welcomeUser(${username})}">Bienvenido, <span th:text="${username}"></span></h2>
 
-</main>
+    <!-- Información de depuración (solo visible cuando no hay usuario autenticado) -->
+    <div th:if="${currentLocale != null}" style="background-color: #f8f9fa; padding: 10px; margin: 10px 0; border: 1px solid #ddd;">
+        <h4>Información de depuración:</h4>
+        <p>Locale actual: <span th:text="${currentLocale}">es</span></p>
+        <p>Texto de "user.guest": <span th:text="${localizedGuest}">Invitado</span></p>
+        <p>Mensaje de bienvenida: <span th:text="${welcomeMessage}">Bienvenido, Invitado</span></p>
+        <p>Prueba de traducción directa: <span th:text="#{nav.language.en}">English</span> / <span th:text="#{nav.language.es}">Español</span></p>
+    </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+    <main>
+        <h2 th:text="#{app.title}">Book Store</h2>
+        <div class="btn-container">
+            <a th:href="@{/book/findByName}" class="btn" th:text="#{index.findBookByName}">Find book by name</a>
+            <a th:href="@{/book/moreReviews}" class="btn" th:text="#{index.mostReviewedBooks}">The books with the most reviews</a>
+            <a th:href="@{/googlebooks/search}" class="btn" th:text="#{index.searchGoogleBooks}">Search Google Books</a>
+        </div>
+    </main>
+
+    <a href="/logout" class="btn" style="margin-top: 20px;" th:text="#{nav.logout}">Cerrar sesión</a>
+
+    <footer th:replace="fragments/footer :: footer"></footer>
 </body>
 </html>

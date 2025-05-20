@@ -1,23 +1,64 @@
 package com.BookStore.projectBookStore.config;
 
+import com.BookStore.projectBookStore.CustomAuthenticationProvider;
+import com.BookStore.projectBookStore.services.ClientService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.List;
+
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+    private final ClientService clientService;
+    private final CustomAuthenticationProvider authenticationProvider;
+
+    public SecurityConfig(ClientService clientService, CustomAuthenticationProvider authenticationProvider) {
+        this.clientService = clientService;
+        this.authenticationProvider = authenticationProvider;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()  // Permite todas las solicitudes sin autenticación
+                        .requestMatchers("/login", "/register", "/img/**", "/styles.css").permitAll() // 🔥 Permite imágenes y CSS
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+                        .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf.disable()) // Desactiva CSRF si no lo necesitas
-                .formLogin(login -> login.disable()) // Desactiva el formulario de login
-                .httpBasic(basic -> basic.disable()); // Desactiva la autenticación básica
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/book/home", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                )
+                .csrf(csrf -> csrf.disable())
+                .userDetailsService(clientService);
 
         return http.build();
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(List.of(authenticationProvider));
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

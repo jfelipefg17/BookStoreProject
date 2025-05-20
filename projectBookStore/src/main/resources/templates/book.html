@@ -1,28 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Book Details</title>
+    <title th:text="#{book.details.title}">Book Details</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container">
-    <h1>Book Details</h1>
+    <h1 th:text="#{book.details.title}">Book Details</h1>
     <div th:if="${error}" class="error">
         <p th:text="${error}"></p>
     </div>
     <div th:if="${success}" class="success">
         <p th:text="${success}"></p>
-    </div>
-    <div th:if="${book}">
-        <p><strong>ID:</strong> <span th:text="${book.id}"></span></p>
-        <p><strong>Title:</strong> <span th:text="${book.title}"></span></p>
-        <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
-        <p><strong>Publisher:</strong> <span th:text="${book.publisher}"></span></p>
-        <p><strong>Category:</strong> <span th:text="${book.category}"></span></p>
+    </div>    <div th:if="${book}">
+        <p><strong th:text="#{table.header.id} + ':'">ID:</strong> <span th:text="${book.id}"></span></p>
+        <p><strong th:text="#{form.title} + ':'">Title:</strong> <span th:text="${book.title}"></span></p>
+        <p><strong th:text="#{form.author} + ':'">Author:</strong> <span th:text="${book.author.getName()}"></span></p>
+        <p><strong th:text="#{form.publisher} + ':'">Publisher:</strong> <span th:text="${book.publisher.getName()}"></span></p>
+        <p><strong th:text="#{form.category} + ':'">Category:</strong> <span th:text="${book.category.getName()}"></span></p>
         <p><strong>Stock:</strong> <span th:text="${book.stock}"></span></p>
-        <p><strong>Price:</strong> $<span th:text="${book.price}"></span></p>
+        <p><strong th:text="#{form.price} + ':'">Price:</strong> $<span th:text="${book.price}"></span></p>
         <p><strong>Likes:</strong> <span th:text="${book.likes} ? 'Yes' : 'No'"></span></p>
         <img th:src="${book.image}" alt="Book Image">
     </div>
@@ -39,6 +38,33 @@
             <button type="submit">Ordenar</button>
         </form>
     </div>
+        <div>            <h2 th:text="#{review.title}">Reseñas</h2>
+            
+            
+            <div th:if="${book.reviews != null and !book.reviews.isEmpty()}">
+                <div th:each="review : ${book.reviews}">
+                    <hr>                    <p><strong th:text="#{review.user} + ':'">Usuario:</strong> <span th:text="${review.name}"></span></p>
+                    <p><strong th:text="#{review.comment} + ':'">Comentario:</strong> <span th:text="${review.description}"></span></p>
+                </div>
+            </div>
+            
+            <p th:if="${book.reviews == null or book.reviews.isEmpty()}" th:text="#{review.none}">Este libro aún no tiene reseñas.</p>
+            
+            <h3 th:text="#{form.create} + ' ' + #{form.description}">Añadir reseña</h3>
+            <form th:action="@{/books/{bookId}/reviews(bookId=${book.id})}" method="post">
+                <p>
+                    <label for="name" th:text="#{form.name} + ':'">Usuario:</label>
+                    <input type="text" id="name" name="name" required>
+                </p>
+                <p>
+                    <label for="description" th:text="#{form.description} + ':'">Comentario:</label><br>
+                    <textarea id="description" name="description" rows="4" cols="50" required></textarea>
+                </p>
+                <button type="submit" th:text="#{form.submit}">Enviar reseña</button>
+            </form>
+        </div>
+    </div>    <a th:href="@{/book/listBooks}" th:text="#{form.cancel}">Go Back</a>
+    <a th:href="@{/book/modifyBook(id=${book.id})}" th:text="#{form.update}">Modify Book</a>
 </div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
