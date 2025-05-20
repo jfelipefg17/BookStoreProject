@@ -10,7 +10,7 @@
 <div class="container">
     <h1>Buscar libros en Google Books</h1>
 
-    <form th:action="@{/books/search}" method="get">
+    <form th:action="@{/googlebooks/search}" method="get">
         <input type="text" name="query" placeholder="Buscar por título, autor..." required>
         <button type="submit">Buscar</button>
     </form>
@@ -23,7 +23,7 @@
         <div th:each="book : ${books}" class="book-card">
             <hr>
             <h2 th:text="${book.title}">Título</h2>
-            <p><strong>Autores:</strong> <span th:text="${book.authors}">Autores</span></p>
+            <p><strong>Autores:</strong> <span th:text="${book.authorsAsString}">Autores</span></p>
             <p><strong>Editorial:</strong> <span th:text="${book.publisher}">Editorial</span></p>
             <p><strong>Fecha de publicación:</strong> <span th:text="${book.publishedDate}">Fecha</span></p>
             <p><strong>Descripción:</strong> <span th:text="${book.description}">Descripción</span></p>

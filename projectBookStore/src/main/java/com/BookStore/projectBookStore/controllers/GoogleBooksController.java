@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 @Controller
+@RequestMapping("/googlebooks")
 public class GoogleBooksController {
 
     private final GoogleBooksService googleBooksService;
@@ -20,12 +22,18 @@ public class GoogleBooksController {
         this.googleBooksService = googleBooksService;
     }
 
-    @GetMapping("/searchBooks")
+    @GetMapping
+    public String showSearchPage() {
+        return "googlebooks";  
+    }
+
+    @GetMapping("/search")
     public String searchBooks(@RequestParam("query") String query, Model model) {
         List<GoogleBookDTO> books = googleBooksService.searchBooks(query);
         model.addAttribute("books", books);
         model.addAttribute("query", query);
-        return "books/searchResults";  
+        return "googlebooks";  
     }
 }
+
 

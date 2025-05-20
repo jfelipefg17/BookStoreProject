@@ -60,4 +60,12 @@ public class GoogleBookDTO {
     public void setPublishedDate(String publishedDate) {
         this.publishedDate = publishedDate;
     }
+
+    public String getAuthorsAsString() {
+        if (authors == null || authors.isEmpty()) {
+            return "Unknown author";
+        }
+        return String.join(", ", authors);
+    }
 }
+
