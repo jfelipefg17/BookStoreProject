@@ -1,6 +1,7 @@
 package com.BookStore.projectBookStore.controllers;
 
 import com.BookStore.projectBookStore.services.ReportService;
+import com.BookStore.projectBookStore.entities.ReportDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class ReportController {
     @ResponseBody
     public String generateReport(
             @RequestParam String type,
-            @RequestParam String data,
+            @RequestBody ReportDataDTO data,
             @RequestParam String filePath) {
         try {
             reportService.exportReport(type, data, filePath);
