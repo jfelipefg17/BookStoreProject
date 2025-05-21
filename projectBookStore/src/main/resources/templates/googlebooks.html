@@ -2,33 +2,33 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Resultados Google Books</title>
+    <title th:text="#{google.title.results}">Resultados Google Books</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container">
-    <h1>Buscar libros en Google Books</h1>
+    <h1 th:text="#{google.search.title}">Buscar libros en Google Books</h1>
 
     <form th:action="@{/googlebooks/search}" method="get">
-        <input type="text" name="query" placeholder="Buscar por título, autor..." required>
-        <button type="submit">Buscar</button>
+        <input type="text" name="query" th:placeholder="#{google.placeholder}" required>
+        <button type="submit" th:text="#{form.search}">Buscar</button>
     </form>
 
     <div th:if="${books != null}">
         <div th:if="${#lists.isEmpty(books)}">
-            <p>No se encontraron resultados para esta búsqueda.</p>
+            <p th:text="#{google.noResults}">No se encontraron resultados para esta búsqueda.</p>
         </div>
 
         <div th:each="book : ${books}" class="book-card">
             <hr>
             <h2 th:text="${book.title}">Título</h2>
-            <p><strong>Autores:</strong> <span th:text="${book.authorsAsString}">Autores</span></p>
-            <p><strong>Editorial:</strong> <span th:text="${book.publisher}">Editorial</span></p>
-            <p><strong>Fecha de publicación:</strong> <span th:text="${book.publishedDate}">Fecha</span></p>
-            <p><strong>Descripción:</strong> <span th:text="${book.description}">Descripción</span></p>
+            <p><strong th:text="#{google.authors} + ':'">Autores:</strong> <span th:text="${book.authorsAsString}">Autores</span></p>
+            <p><strong th:text="#{google.publisher} + ':'">Editorial:</strong> <span th:text="${book.publisher}">Editorial</span></p>
+            <p><strong th:text="#{google.publishedDate} + ':'">Fecha de publicación:</strong> <span th:text="${book.publishedDate}">Fecha</span></p>
+            <p><strong th:text="#{google.description} + ':'">Descripción:</strong> <span th:text="${book.description}">Descripción</span></p>
             <div th:if="${book.thumbnail != null}">
-                <img th:src="${book.thumbnail}" alt="Portada" style="max-height: 200px;">
+                <img th:src="${book.thumbnail}" alt="" th:alt="#{google.cover.alt}" style="max-height: 200px;">
             </div>
         </div>
     </div>

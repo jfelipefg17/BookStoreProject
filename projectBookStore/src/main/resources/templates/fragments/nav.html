@@ -1,6 +1,7 @@
 <nav th:fragment="nav">
-    <img src="/img/logo.jpeg" alt="Logo" />
+    <img src="/img/logo.jpeg" alt="#{nav.logoAlt}" />
     <ul>
+        <li><a th:href="@{/book/home}" th:text="#{nav.home}">Home</a></li>
         <li><a th:href="@{/book/listBooks}" th:text="#{nav.bookList}">Book List</a></li>
         <li><a th:href="@{/book/formBook}" th:text="#{nav.createBook}">Create Book</a></li>
         <li><a th:href="@{/googlebooks}" th:text="#{nav.searchGoogleBooks}">Search Google Books</a></li>

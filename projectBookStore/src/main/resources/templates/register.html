@@ -2,26 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro</title>
+    <title th:text="#{register.title}">Registro</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 <div class="container">
-    <h2>Registro</h2>
+    <h2 th:text="#{register.title}">Registro</h2>
     <form method="post" action="/register">
-        <label for="name">Nombre:</label>
+        <label for="name" th:text="#{form.name} + ':'">Nombre:</label>
         <input type="text" id="name" name="name" required>
 
-        <label for="email">Email:</label>
+        <label for="email" th:text="#{form.email} + ':'">Email:</label>
         <input type="email" id="email" name="email" required>
 
-        <label for="password">Contraseña:</label>
+        <label for="password" th:text="#{form.password} + ':'">Contraseña:</label>
         <input type="password" id="password" name="password" required>
 
-        <button type="submit">Registrarse</button>
+        <button type="submit" th:text="#{register.button}">Registrarse</button>
     </form>
 
-    <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a></p>
+    <p>
+        <span th:text="#{register.haveAccount}">¿Ya tienes cuenta?</span>
+        <a href="/login" th:text="#{register.linkLogin}">Inicia sesión aquí</a>
+    </p>
 
 </div>
 
