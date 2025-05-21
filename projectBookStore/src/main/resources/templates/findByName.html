@@ -17,14 +17,14 @@
         <input type="text" id="title" name="title" required>
         <button type="submit" th:text="#{form.search}">Buscar</button>
     </form>    <div th:if="${book != null}">
-        <h3 th:text="#{book.details.title}">Resultado:</h3>
+        <h3 th:text="#{book.searchResultTitle}">Resultado:</h3>
         <table>
             <tr>
                 <th th:text="#{table.header.id}">ID</th>
                 <th th:text="#{form.title}">Título</th>
                 <th th:text="#{form.author}">Autor</th>
                 <th th:text="#{form.price}">Precio</th>
-                <th>Stock</th>
+                <th th:text="#{form.stock}">Stock</th>
             </tr>
             <tr>
                 <td th:text="${book.id}"></td>

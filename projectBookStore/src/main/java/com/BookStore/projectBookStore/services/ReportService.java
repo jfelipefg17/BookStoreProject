@@ -1,6 +1,5 @@
 package com.BookStore.projectBookStore.services;
 
-import com.BookStore.projectBookStore.services.report.ReportGenerator;
 import com.BookStore.projectBookStore.services.report.PdfReportGenerator;
 import com.BookStore.projectBookStore.services.report.ExcelReportGenerator;
 import com.BookStore.projectBookStore.entities.ReportDataDTO;

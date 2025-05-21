@@ -38,7 +38,6 @@ public class GoogleBooksService {
                 book.setPublishedDate((String) volumeInfo.get("publishedDate"));
                 book.setDescription((String) volumeInfo.get("description"));
 
-                // Extraer imagen miniatura si existe
                 Map<String, Object> imageLinks = (Map<String, Object>) volumeInfo.get("imageLinks");
                 if (imageLinks != null && imageLinks.get("thumbnail") != null) {
                     book.setThumbnail((String) imageLinks.get("thumbnail"));
@@ -51,4 +50,5 @@ public class GoogleBooksService {
         return books;
     }
 }
+
 
