@@ -27,10 +27,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {        http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/img/**", "/styles.css").permitAll() // 🔥 Permite imágenes y CSS
+                        .requestMatchers("/login", "/register", "/img/**", "/styles.css", "/error").permitAll() // 🔥 Permite imágenes, CSS y página de error
+                        .requestMatchers("/pedidos/**").permitAll() // 🔥 Permitir acceso a pedidos para pruebas
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
