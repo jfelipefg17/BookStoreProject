@@ -31,6 +31,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/img/**", "/styles.css", "/error").permitAll() // 🔥 Permite imágenes, CSS y página de error
                         .requestMatchers("/pedidos/**").permitAll() // 🔥 Permitir acceso a pedidos para pruebas
+                        .requestMatchers("/books/**").permitAll() // 🔥 Permitir acceso a libros
+                        .requestMatchers("/reviews/**").permitAll() // 🔥 Permitir acceso a reseñas
+                        .requestMatchers("/book/**").permitAll() // 🔥 Permitir acceso a libros (controlador original)
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
