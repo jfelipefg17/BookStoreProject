@@ -15,10 +15,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   app:
-
-    image: jfelipefg17/projectbookstore-app:latest2
+    image: henao13/bookstore-app:latest
     depends_on:
       mysql:
         condition: service_healthy
