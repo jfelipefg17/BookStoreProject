@@ -22,18 +22,19 @@ public class GoogleBooksController {
         this.googleBooksService = googleBooksService;
     }
 
-    @GetMapping
-    public String showSearchPage() {
-        return "googlebooks";  
+    // Muestra el formulario de búsqueda
+    @GetMapping("/form")
+    public String showSearchForm() {
+        return "searchForm"; 
     }
 
+    // Procesa la búsqueda y muestra resultados
     @GetMapping("/search")
     public String searchBooks(@RequestParam("query") String query, Model model) {
         List<GoogleBookDTO> books = googleBooksService.searchBooks(query);
         model.addAttribute("books", books);
         model.addAttribute("query", query);
-        return "googlebooks";  
+        return "searchResults"; 
     }
 }
-
 

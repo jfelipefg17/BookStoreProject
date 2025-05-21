@@ -43,15 +43,13 @@ public class PedidoController {
         model.addAttribute("subtitle", "Detalles del pedido");
         model.addAttribute("pedido", pedido);
         return "pedido/show"; // Retorna la vista pedido/show.html (Thymeleaf)
-    }
-
-    @GetMapping("/pedidos/create")
+    }    @GetMapping("/pedidos/create")
     public String createPedidoForm(Model model) {
         model.addAttribute("pedido", new Pedido());
+        model.addAttribute("title", "Crear Pedido");
+        model.addAttribute("subtitle", "Formulario de nuevo pedido");
         return "pedido/create";
-    }
-
-    @PostMapping("/pedidos")
+    }@PostMapping("/pedidos")
     public String save(@ModelAttribute Pedido pedido,
                        @RequestParam(value = "descuento", required = false) String descuento,
                        Model model) {
@@ -66,12 +64,22 @@ public class PedidoController {
             return "pedido/create"; // Volver al formulario con el mensaje de error
         }
 
-        // Guardar el pedido
-        pedidoRepository.save(pedido);
+        try {
+            // Guardar el pedido
+            pedidoRepository.save(pedido);
 
-        // Redirigir a la página de éxito con el mensaje
-        model.addAttribute("message", "Elemento creado satisfactoriamente");
-        return "pedido/success"; // Página de éxito
+            // Redirigir a la página de éxito con el mensaje
+            model.addAttribute("message", "Elemento creado satisfactoriamente");
+            return "pedido/success"; // Página de éxito
+        } catch (Exception e) {
+            // Log del error
+            System.err.println("Error al guardar el pedido: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Devolver al formulario con mensaje de error
+            model.addAttribute("error", "Error al guardar el pedido: " + e.getMessage());
+            return "pedido/create";
+        }
     }
 
     @PostMapping("/pedidos/{id}/delete")
