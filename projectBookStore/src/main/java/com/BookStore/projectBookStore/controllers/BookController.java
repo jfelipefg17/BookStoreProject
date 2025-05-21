@@ -36,7 +36,12 @@ public class BookController {
     private MessageSource messageSource;
 
     @Autowired
-    private ClientService clientService;    @GetMapping("/home")
+    private ClientService clientService;
+
+    @Autowired
+    private LikeService likeService;
+
+    @GetMapping("/home")
     public String homePage(@AuthenticationPrincipal UserDetails userDetails, Model model, Locale locale) {
         if (userDetails != null) {
             // Verificar si tenemos un ClientUserDetails

@@ -38,8 +38,7 @@
             <td th:text="${book.title}"></td>
             <td th:text="${book.author.getName()}"></td>
             <td th:text="${book.price}"></td>
-            <td>
-                <a th:href="@{/book/listBook(id=${book.id})}">
+            <td>                <a th:href="@{/books/{id}(id=${book.id})}">
                     <button type="button" th:text="#{button.moreInfo}">More Info</button>
                 </a>
                 <form th:action="@{/book/deleteBook}" method="post" style="display:inline;">

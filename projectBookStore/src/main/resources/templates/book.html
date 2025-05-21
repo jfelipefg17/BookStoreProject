@@ -2,8 +2,63 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf != null} ? ${_csrf.token} : ''"/>
     <title th:text="#{book.details.title}">Book Details</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+        .btn-like {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-like:hover {
+            background-color: #f8f8f8;
+        }
+        
+        .btn-like.liked {
+            color: #e74c3c;
+        }
+        
+        .review-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .review-user {
+            font-weight: bold;
+        }
+        
+        .review-likes {
+            display: flex;
+            align-items: center;
+        }
+        
+        .review-like-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 5px;
+        }
+        
+        .review-like-btn.liked {
+            color: #e74c3c;
+        }
+    </style>
 </head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
@@ -22,7 +77,13 @@
         <p><strong th:text="#{form.category} + ':'">Category:</strong> <span th:text="${book.category.getName()}"></span></p>
         <p><strong>Stock:</strong> <span th:text="${book.stock}"></span></p>
         <p><strong th:text="#{form.price} + ':'">Price:</strong> $<span th:text="${book.price}"></span></p>
-        <p><strong>Likes:</strong> <span th:text="${book.likes} ? 'Yes' : 'No'"></span></p>
+        <p>
+            <strong>Likes:</strong> <span id="likeCount" th:text="${book.likes.size()}"></span>
+            <button id="likeButton" class="btn-like" th:attr="data-book-id=${book.id}">
+                <span th:if="${userLikedBook}" class="liked">❤️ Me gusta</span>
+                <span th:unless="${userLikedBook}">🤍 Me gusta</span>
+            </button>
+        </p>
         <img th:src="${book.image}" alt="Book Image">
     </div>
     <a th:href="@{/book/listBooks}">Go Back</a>
@@ -48,11 +109,19 @@
     </div>
         <div>            <h2 th:text="#{review.title}">Reseñas</h2>
             
-            
             <div th:if="${book.reviews != null and !book.reviews.isEmpty()}">
-                <div th:each="review : ${book.reviews}">
-                    <hr>                    <p><strong th:text="#{review.user} + ':'">Usuario:</strong> <span th:text="${review.name}"></span></p>
-                    <p><strong th:text="#{review.comment} + ':'">Comentario:</strong> <span th:text="${review.description}"></span></p>
+                <div th:each="review : ${book.reviews}" class="review-container">
+                    <div class="review-header">
+                        <span class="review-user" th:text="${review.name}">Usuario</span>
+                        <div class="review-likes">
+                            <span class="review-like-count" th:attr="data-review-id=${review.id}" th:text="${review.likes.size()}">0</span>
+                            <button class="review-like-btn" th:attr="data-review-id=${review.id}">
+                                <span th:if="${userLikedReviews != null && userLikedReviews.contains(review.id)}">❤️</span>
+                                <span th:unless="${userLikedReviews != null && userLikedReviews.contains(review.id)}">🤍</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p th:text="${review.description}">Comentario de la reseña</p>
                 </div>
             </div>
             
@@ -75,5 +144,101 @@
     <a th:href="@{/book/modifyBook(id=${book.id})}" th:text="#{form.update}">Modify Book</a>
 </div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const likeButton = document.getElementById('likeButton');
+        if (likeButton) {
+            likeButton.addEventListener('click', function() {
+                const bookId = this.getAttribute('data-book-id');
+                toggleLike(bookId);
+            });
+        }
+
+        // También agregar manejadores para los botones de like en las reseñas
+        const reviewLikeButtons = document.querySelectorAll('.review-like-btn');
+        reviewLikeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const reviewId = this.getAttribute('data-review-id');
+                toggleReviewLike(reviewId);
+            });
+        });
+    });
+
+    function toggleLike(bookId) {
+        fetch(`/books/${bookId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const likeButton = document.getElementById('likeButton');
+                const likeCount = document.getElementById('likeCount');
+                
+                if (data.liked) {
+                    // Ahora tiene like
+                    likeButton.innerHTML = '❤️ Me gusta';
+                    likeButton.classList.add('liked');
+                } else {
+                    // Ya no tiene like
+                    likeButton.innerHTML = '🤍 Me gusta';
+                    likeButton.classList.remove('liked');
+                }
+                
+                // Actualizar contador de likes
+                if (likeCount) {
+                    likeCount.textContent = data.likeCount;
+                }
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ha ocurrido un error al procesar tu solicitud');
+        });
+    }
+
+    function toggleReviewLike(reviewId) {
+        fetch(`/reviews/${reviewId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const likeButton = document.querySelector(`.review-like-btn[data-review-id="${reviewId}"]`);
+                const likeCount = document.querySelector(`.review-like-count[data-review-id="${reviewId}"]`);
+                
+                if (data.liked) {
+                    // Ahora tiene like
+                    likeButton.innerHTML = '❤️';
+                    likeButton.classList.add('liked');
+                } else {
+                    // Ya no tiene like
+                    likeButton.innerHTML = '🤍';
+                    likeButton.classList.remove('liked');
+                }
+                
+                // Actualizar contador de likes
+                if (likeCount) {
+                    likeCount.textContent = data.likeCount;
+                }
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ha ocurrido un error al procesar tu solicitud');
+        });
+    }
+</script>
 </body>
 </html>

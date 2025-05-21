@@ -1,5 +1,5 @@
 package com.BookStore.projectBookStore.repositories;
-import com.BookStore.projectBookStore.entities.Publisher;
+import com.BookStore.projectBookStore.entities.Book;
 import com.BookStore.projectBookStore.entities.Review;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,11 +17,17 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAll();
 
     // Find-search review by id
-    Optional<Review> findById(Integer id);
+    Optional<Review> findById(Long id);
 
     // Save-Update review
     Review save(Review review);
 
     // Delete review
-    void deleteById(Integer id);
+    void deleteById(Long id);
+    
+    // Find reviews by book
+    List<Review> findByBook(Book book);
+    
+    // Count reviews by book
+    int countByBook(Book book);
 }

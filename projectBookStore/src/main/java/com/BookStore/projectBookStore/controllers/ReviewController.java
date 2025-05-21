@@ -23,9 +23,7 @@ public class ReviewController {
     private BookRepository bookRepository;
 
     @Autowired
-    private LikeRepository likeRepository;
-
-    // Agregar una reseña al libro
+    private LikeRepository likeRepository;    // Agregar una reseña al libro
     @PostMapping
     public String addReview(@PathVariable Integer bookId, @RequestParam String name, @RequestParam String description) {
         Optional<Book> bookOptional = bookRepository.findById(bookId);
@@ -34,7 +32,7 @@ public class ReviewController {
             Review review = new Review(name, description, book);
             reviewRepository.save(review);
         }
-        return "redirect:/book/listBook?id=" + bookId;
+        return "redirect:/books/" + bookId;
     }
 
 
@@ -45,9 +43,7 @@ public class ReviewController {
         model.addAttribute("review", review);
         model.addAttribute("bookId", bookId);
         return "review/edit";
-    }
-
-    @PostMapping("/{reviewId}/update")
+    }    @PostMapping("/{reviewId}/update")
     public String updateReview(@PathVariable Integer bookId, @PathVariable Long reviewId,
                                @RequestParam("name") String name,
                                @RequestParam("description") String description) {
@@ -56,26 +52,33 @@ public class ReviewController {
         review.setName(name);
         review.setDescription(description);
         reviewRepository.save(review);
-        return "redirect:/book/listBook?id=" + bookId;
-    }
-
-    // Endpoint para eliminar una reseña
+        return "redirect:/books/" + bookId;
+    }    // Endpoint para eliminar una reseña
     @PostMapping("/{reviewId}/delete")
     public String deleteReview(@PathVariable Integer bookId, @PathVariable Long reviewId) {
         reviewRepository.deleteById(reviewId);
-        return "redirect:/book/listBook?id=" + bookId;
-    }
-
-    // Endpoint para dar like a una reseña
+        return "redirect:/books/" + bookId;
+    }    // Endpoint para dar like a una reseña (versión no AJAX)
     @PostMapping("/{reviewId}/like")
     public String likeReview(@PathVariable Integer bookId, @PathVariable Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
-        Like like = new Like(review);
-        likeRepository.save(like);
-        review.getLikes().add(like);
-        reviewRepository.save(review);
-        return "redirect:/book/listBook?id=" + bookId;
+        try {
+            Optional<Book> bookOptional = bookRepository.findById(bookId);
+            if (!bookOptional.isPresent()) {
+                return "redirect:/error";
+            }
+            
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found"));
+            
+            // En una aplicación real, aquí obtendríamos el cliente autenticado
+            // Por simplicidad, creamos un like sin asociar a cliente específico
+            Like like = new Like(review);
+            likeRepository.save(like);
+            
+            return "redirect:/books/" + bookId;
+        } catch (Exception e) {
+            return "redirect:/error";
+        }
     }
 
     

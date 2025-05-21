@@ -29,14 +29,12 @@
             <th>Reviews</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="book : ${books}">
+        <tbody>        <tr th:each="book : ${books}">
             <td th:text="${book.id}"></td>
             <td th:text="${book.title}"></td>
-            <td th:text="${book.author}"></td>
+            <td th:text="${book.author != null ? book.author.name : ''}"></td>
             <td th:text="${book.price}"></td>
-            <td th:text="${book.reviews != null ? book.reviews.size() : 0}"></td>
-            <td>                <a th:href="@{/book/listBook(id=${book.id})}">
+            <td th:text="${book.reviews != null ? book.reviews.size() : 0}"></td><td>                <a th:href="@{/books/{id}(id=${book.id})}">
                     <button type="button" th:text="#{button.moreInfo}">Más información</button>
                 </a>
                 <form th:action="@{/book/deleteBook}" method="post" style="display:inline;">
