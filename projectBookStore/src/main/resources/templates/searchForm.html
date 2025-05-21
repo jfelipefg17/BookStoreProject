@@ -10,7 +10,7 @@
 
 <div class="container">
     <h2 th:text="#{search.form.header}">Buscar libros en Google</h2>
-    <form th:action="@{/searchBooks}" method="get">
+    <form th:action="@{/googlebooks/search}" method="get">
         <input type="text" name="query" placeholder="Título o palabra clave" required />
         <button type="submit" th:text="#{search.form.button}">Buscar</button>
     </form>
